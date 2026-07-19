@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>跑Online 配裝分享器</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:grid;place-items:center;background:radial-gradient(circle at 20% 10%,#fff 0 3%,transparent 25%),linear-gradient(135deg,#efd4ff,#8bdff7 48%,#f8b6da 73%,#9e8af2);font-family:"Microsoft JhengHei","PingFang TC",Arial,sans-serif;color:#17345d;user-select:none}button{font:inherit;border:0;cursor:pointer;color:inherit}.viewport{position:relative}.game{position:absolute;left:0;top:0;width:1020px;height:708px;display:grid;grid-template-rows:24px 40px 614px 30px;overflow:hidden;border:1px solid #4e8fc7;border-radius:7px 7px 0 0;background:linear-gradient(90deg,rgba(255,255,255,.2),transparent),radial-gradient(circle at 10% 52%,#8cf0cd 0 7%,transparent 22%),linear-gradient(145deg,#ff9da7,#f2d7b4 25%,#9fecf2 48%,#ffcae6 70%,#a992ef);box-shadow:0 18px 60px rgba(24,39,94,.38),inset 0 0 55px rgba(255,255,255,.58);transform-origin:top left}.game:before{content:"";position:absolute;inset:64px 0 30px;pointer-events:none;background:radial-gradient(circle at 7% 72%,rgba(21,192,105,.48) 0 5%,transparent 6%),repeating-radial-gradient(circle at 44% 65%,transparent 0 42px,rgba(255,255,255,.16) 44px 46px);z-index:0}
+    .titlebar{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 6px;color:#777;background:#fafafa;border-bottom:1px solid #b8c8d7;font:11px Arial}.window-actions{display:flex;gap:24px;padding-right:6px;font-size:14px}.topbar{position:relative;z-index:10;display:grid;grid-template-columns:36% 30% 34%;align-items:center;padding:0 8px;background:linear-gradient(#fff,rgba(221,243,255,.78) 70%,rgba(103,183,240,.3));border-bottom:2px solid rgba(255,255,255,.8);box-shadow:0 2px 7px rgba(42,88,153,.45)}.tip{font-size:10px;color:#286b9f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tip b{color:#078fe7}.world-nav{justify-self:center;display:flex;width:235px;height:28px;filter:drop-shadow(0 1px 1px #2e609e)}.world-nav button{flex:1;color:#fff;font-size:12px;font-weight:900;border:1px solid #2870bc;background:linear-gradient(#5fc9ff,#168ddd 60%,#0774c9);text-shadow:0 1px #285d94;box-shadow:inset 0 1px 2px #fff}.world-nav button:first-child{border-radius:5px 0 0 5px}.world-nav button:last-child{border-radius:0 5px 5px 0}.quick{display:flex;justify-content:flex-end;gap:3px}.quick button{width:23px;height:23px;padding:0;border-radius:5px;color:#fff;font-size:12px;font-weight:900;border:1px solid #3676aa;background:linear-gradient(#65caff,#168ce0);box-shadow:inset 0 1px #fff}.quick button:nth-child(2n){background:linear-gradient(#a987ff,#644ad0)}.quick button:nth-child(3n){background:linear-gradient(#ff9bd2,#eb4e9a)}
+    .workspace{position:relative;z-index:2;display:grid;grid-template-columns:430px 590px}.left-panel{position:relative;overflow:hidden;border-right:1px solid rgba(45,104,184,.3)}.stats-panel{position:absolute;z-index:8;left:17px;top:12px;width:401px;height:139px;padding:8px 8px 6px;border:1px solid #52a7e9;border-radius:11px;background:rgba(247,250,253,.79);box-shadow:inset 0 0 18px #fff,0 2px 7px rgba(56,93,158,.2)}.stat-top{display:grid;grid-template-columns:165px 1fr;gap:7px;height:54px}.stats-list{padding-top:1px}.stat-row{display:grid;grid-template-columns:56px 94px 15px;align-items:center;height:11px;color:#222;font-size:8px}.stat-row i{display:flex;height:5px;padding:0 1px;overflow:hidden;border:1px solid #111;background:#222}.stat-row em{display:block;flex:0 0 auto;height:100%;transition:width .18s}.stat-row em.bonus-bar{background:#79df31;box-shadow:inset 1px 0 rgba(255,255,255,.7)}.stat-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.stat-buttons button{height:41px;padding:0;border:1px solid #5198df;border-radius:6px;color:#12659f;font-size:10px;font-weight:900;background:linear-gradient(#f1fbff,#84d8ff 55%,#4dbaf0);box-shadow:inset 0 1px 2px #fff}.stat-buttons .luck{color:#477600;background:linear-gradient(#fbff75,#afdf21 56%,#7ac400)}.stat-buttons .off{background:linear-gradient(#f4f5ff,#88a9e8)}.mini-rows{margin-top:3px}.mini-row{display:grid;grid-template-columns:41px repeat(13,1fr);gap:2px;height:23px;margin-bottom:1px}.mini-row span{display:grid;place-items:center;border:1px solid #258dcb;border-radius:4px;color:#1069a6;font-size:9px;font-weight:900;background:linear-gradient(#a4edff,#52c3ec)}.mini-row i{display:grid;place-items:center;border:1px solid #7899b5;border-radius:3px;color:#5e7080;font-size:9px;font-style:normal;background:linear-gradient(145deg,#b4c3ce,#728491);text-shadow:1px 1px #c5d0d8}.mini-row i.dark{color:#101d29;background:linear-gradient(145deg,#526271,#172535)}.mini-row i.empty{color:transparent;border-color:#8ec8e9;background:rgba(102,181,230,.25)}
+    .room{position:absolute;inset:128px 0 0;overflow:hidden;background:linear-gradient(90deg,rgba(255,255,255,.46),transparent 14% 85%,rgba(255,255,255,.36)),radial-gradient(ellipse at 49% 100%,rgba(111,156,255,.65),transparent 43%),linear-gradient(90deg,#ffeff0,#ffe6b9 28%,#ffb6d6 29% 33%,#f8f0e6 34% 67%,#ffb9df 68% 72%,#eee5ff)}.room:after{content:"";position:absolute;left:12%;right:0;bottom:0;height:28%;opacity:.57;background:repeating-radial-gradient(ellipse at 43% 100%,transparent 0 27px,rgba(255,255,255,.72) 29px 32px,transparent 34px 58px)}.window{position:absolute;left:142px;top:34px;width:176px;height:280px;overflow:hidden;border:8px solid #a9653f;border-radius:44% 44% 2% 2%/12% 12% 2% 2%;background:linear-gradient(#27dae4 0 48%,#b4efff 70%,#fff);box-shadow:0 0 0 4px #eea56c,inset 0 0 18px #fff}.window:before,.window:after{content:"";position:absolute;z-index:2;background:#a65d3a;box-shadow:0 0 0 2px #eda16b}.window:before{left:80px;width:6px;height:100%}.window:after{top:143px;width:100%;height:6px}.cloud{position:absolute;width:45px;height:20px;border-radius:50%;background:#fff;box-shadow:18px 0 #fff,-10px 3px #fff;filter:blur(1px)}.cloud.a{left:22px;top:96px}.cloud.b{right:15px;top:190px;transform:scale(.8)}.plant{position:absolute;left:-14px;top:45px;width:128px;height:230px;z-index:1}.plant i{position:absolute;width:49px;height:80px;border-radius:80% 5% 80% 5%;background:linear-gradient(135deg,#60df58,#0da56b);box-shadow:inset 0 0 6px #aff788;transform-origin:bottom right}.plant i:nth-child(1){left:31px;top:0;transform:rotate(18deg)}.plant i:nth-child(2){left:67px;top:42px;transform:rotate(59deg)}.plant i:nth-child(3){left:5px;top:80px;transform:rotate(-18deg)}.plant i:nth-child(4){left:63px;top:120px;transform:rotate(43deg)}.plant span{position:absolute;left:57px;top:122px;width:16px;height:125px;border-radius:50%;background:#438e55}.fashion{position:absolute;z-index:7;left:19px;top:43px;padding:6px 15px;border:3px solid #fff;border-radius:5px 18px 5px 18px;color:#fff;font-size:11px;font-weight:900;background:linear-gradient(#ff86cb,#df4198);box-shadow:0 0 0 2px #e44aa1}.name-ribbon{position:absolute;z-index:7;left:165px;top:49px;width:116px;height:24px;display:grid;place-items:center;border:2px solid #44aaf0;border-radius:999px;color:#0570b9;font-size:10px;font-weight:900;background:linear-gradient(#c3f5ff,#68d3ff);box-shadow:inset 0 2px #fff,0 2px 3px rgba(35,103,158,.3)}.no-model{position:absolute;z-index:6;left:154px;top:330px;width:150px;padding:6px 9px;border:1px dashed rgba(45,125,187,.65);border-radius:999px;color:#3477a6;font-size:9px;text-align:center;background:rgba(247,253,255,.76)}
+    .rail{position:absolute;z-index:8;top:118px;width:72px;padding:5px;border:2px solid;border-radius:8px;box-shadow:0 2px 5px rgba(39,82,129,.3)}.rail.avatar{left:18px;border-color:#35b1e8;background:rgba(166,230,252,.82)}.rail.role{right:18px;border-color:#87a9c7;background:rgba(225,239,248,.84)}.rail-title{position:absolute;left:4px;right:4px;top:-30px;height:26px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:999px;color:#fff;font-size:8px;font-weight:900;box-shadow:0 0 0 2px;white-space:nowrap}.avatar .rail-title{background:linear-gradient(#66d8ff,#1686d0);box-shadow:0 0 0 2px #39a9dd}.role .rail-title{color:#57758f;background:linear-gradient(#fff,#c8deec);box-shadow:0 0 0 2px #8ba9c0}.rail-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:31px;gap:3px}.rail-slot{position:relative;display:grid;place-items:center;overflow:hidden;border:1px solid;border-radius:5px;color:rgba(54,130,183,.42);font-size:14px;background:linear-gradient(145deg,rgba(202,240,255,.9),rgba(91,168,216,.62))}.avatar .rail-slot{border-color:#77bfe4}.role .rail-slot{border-color:#a8bfd1;background:linear-gradient(145deg,#edf5fa,#bacddb)}.rail-slot img{width:100%;height:100%;object-fit:contain}.rail-slot.equipped{border-color:#ffd331;background:radial-gradient(circle,#d85cbd,#6b1f88);box-shadow:inset 0 0 0 1px #fff,0 0 5px rgba(255,205,42,.7)}.rail-slot.occupied:after{content:attr(data-label);position:absolute;left:1px;right:1px;bottom:1px;padding:1px 0;border-radius:2px;color:#fff;font-size:6px;text-align:center;background:rgba(61,19,83,.72)}.rail-footer{width:100%;margin-top:4px;height:22px;display:flex;align-items:center;justify-content:center;gap:3px;padding:0;border:1px solid #55a8d5;border-radius:5px;color:#4e7188;font-size:8px;background:#fff}.rail-footer .check-box{width:11px;height:11px;display:grid;place-items:center;border:1px solid #65a9d2;border-radius:3px;color:transparent;font-size:8px;background:#edf9ff}.rail-footer.open .check-box{color:#fff;background:#25a4e7}.role .rail-footer{border-color:#9ab6ca}.slot-row{position:absolute;z-index:7;left:22px;bottom:20px;display:flex;gap:7px;color:#176fb4;font-size:9px;font-weight:900;text-align:center}.slot-row span{width:34px}.slot-row .locked{filter:grayscale(1);color:#666}.save-strip{position:absolute;z-index:7;left:125px;right:112px;bottom:13px;height:21px;display:flex;border:2px solid #4bb4e3;border-radius:999px;overflow:hidden;background:rgba(244,252,255,.9)}.save-strip span{flex:1;display:flex;align-items:center;padding-left:12px;color:#3a8daf;font-size:8px}.save-strip button{width:44px;padding:0;color:#4b97b8;font-size:8px;background:#c9ecfb;border-left:1px solid #76c4e2}.undo{position:absolute;z-index:7;right:21px;bottom:14px;width:31px;height:31px;border:2px solid #5db6e9;border-radius:7px;color:#1988d2;font-size:19px;background:#fff}
+    .wardrobe{position:relative;margin:8px 10px 8px 0;overflow:hidden;border:2px solid #276dc2;border-radius:21px;background:rgba(248,248,252,.79);box-shadow:inset 0 0 24px #fff,0 2px 7px rgba(38,75,151,.38)}.category-tabs{height:42px;display:flex;padding:9px 10px 0;gap:2px;border-bottom:2px solid #2771c7;background:linear-gradient(rgba(116,177,241,.66),rgba(53,105,191,.73))}.category-tabs button{flex:1;margin-bottom:-2px;border:1px solid #2568b9;border-radius:9px 9px 0 0;color:#fff;font-size:13px;font-weight:900;text-shadow:0 1px #37609a;background:linear-gradient(#7ed3ff,#258bdc 65%,#1673c9);box-shadow:inset 0 1px 2px #fff}.category-tabs button.active{color:#263760;text-shadow:none;border-bottom-color:#f3eff8;background:linear-gradient(#fff,#ededfb 65%,#e5e2ef)}.wardrobe-body{position:absolute;inset:42px 0 40px;padding:6px 30px 5px}.wardrobe-links{height:27px;display:flex;align-items:center;gap:8px;padding-left:3px;color:#24527b;font-size:10px}.subtab-list{display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden}.subtab-list button{padding:3px 7px;border-radius:999px;color:#255a84;font-size:9px;background:rgba(212,235,249,.82)}.subtab-list button.active{color:#fff;font-weight:900;background:linear-gradient(#45baf1,#167dc8);box-shadow:inset 0 1px #fff}.set-state{margin-left:auto;display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #71b52c;border-radius:999px;color:#438b08;font-size:9px;font-weight:900;white-space:nowrap;background:linear-gradient(#f8ffd8,#bce769)}.set-state.off{filter:grayscale(1);color:#777}.wardrobe-grid{height:464px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px 12px}.item-card,.empty-card{position:relative;min-width:0;min-height:0;border:1px solid #b8b8b8;border-radius:10px;background:linear-gradient(#fff,#fafafa 67%,#dedede);box-shadow:1px 2px 1px #bdc0c2,inset 0 0 0 1px #fff}.item-card{cursor:pointer}.item-card:focus-visible{outline:2px solid #ffd33d;outline-offset:2px}.empty-card{opacity:.68;background:linear-gradient(145deg,rgba(255,255,255,.56),rgba(217,226,236,.36));border-color:rgba(255,255,255,.95);box-shadow:1px 1px 2px rgba(95,119,152,.3),inset 0 0 0 1px rgba(170,187,208,.3)}.empty-card:before{content:"";position:absolute;inset:9px;border:1px dashed rgba(105,142,177,.16);border-radius:7px}.item-card.selected{border-color:#f5a900;box-shadow:0 0 0 2px #ffd55c,0 3px 8px rgba(255,166,0,.34)}.item-card.not-worn{filter:saturate(.48)}.favorite{position:absolute;right:5px;top:3px;z-index:4;padding:0;color:#d0d2d3;font-size:20px;line-height:1;background:transparent}.avatar-mark{position:absolute;z-index:4;left:-6px;top:7px;width:18px;height:18px;display:grid;place-items:center;border:1px solid #0877b7;border-radius:50%;color:#fff;font-size:8px;font-weight:900;background:#19b8ed;box-shadow:0 0 0 1px #fff}.item-icon{display:block;width:54px;height:54px;margin:6px auto 1px}.item-icon img{width:100%;height:100%;object-fit:contain}.item-card h3{margin:0 4px;height:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#171717;font-size:9px;font-weight:500;text-align:center}.occupancy{height:13px;margin:0 5px 2px;overflow:hidden;white-space:nowrap;border-radius:2px;color:#3e3e3e;font-size:7px;line-height:13px;text-align:center;background:#c4c9cf}.card-actions{height:18px;display:flex;gap:4px;padding:0 6px}.card-actions button{flex:1;padding:0;border:1px solid;border-radius:3px;color:#fff;font-size:8px;font-weight:900}.card-actions .wear{border-color:#2d7e00;background:linear-gradient(#83cd2b,#3d9707)}.card-actions .remove{border-color:#076cad;background:linear-gradient(#43b9f5,#087ed0)}.card-actions .disabled{color:#aaa;border-color:#c8c8c8;background:#eee}.wardrobe-footer{position:absolute;left:0;right:0;bottom:0;height:40px;display:flex;align-items:center;gap:8px;padding:0 10px;border-top:1px solid #d7d7df;background:rgba(248,249,252,.94)}.search{width:22px;color:#0e9ce6;font-size:25px;transform:rotate(-20deg)}.filterbar{height:24px;flex:1;display:flex;align-items:center;gap:22px;padding:0 8px;border:2px solid #72c5f0;border-radius:5px;color:#fff;font-size:9px;background:linear-gradient(#338fd8,#1264b9);box-shadow:inset 0 1px #fff}.filterbar label{display:flex;align-items:center;gap:4px}.filterbar input{accent-color:#12a5ec}.filterbar button{margin-left:auto;width:21px;height:19px;padding:0;border:1px solid #73c7ef;border-radius:3px;color:#fff;background:#1687d1}.detail,.confirm{height:24px;padding:0 8px;border:2px solid #68c6ef;border-radius:5px;color:#fff;font-size:9px;font-weight:900;background:linear-gradient(#55b8ec,#1474bf)}.confirm{border-color:#ffbf82;background:linear-gradient(#ffb965,#eb791e)}
+    .bottom{position:relative;z-index:10;display:grid;grid-template-columns:390px 155px 1fr;border-top:2px solid #5e9dd2;background:rgba(251,253,255,.97);box-shadow:0 -2px 5px rgba(35,73,130,.2)}.player{display:flex;align-items:center;gap:5px}.rank{display:grid;place-items:center;width:38px;height:100%;color:#aaa;font-size:22px;font-weight:900;font-style:italic;text-shadow:1px 1px #fff;transform:rotate(-12deg)}.portrait{width:27px;height:27px;object-fit:contain;border:1px solid #8aaac4}.player-copy{display:flex;flex:1;flex-direction:column}.player-copy b{font-size:9px;font-weight:500}.exp{height:7px;border:1px solid #777;color:#fff;font-size:6px;line-height:5px;background:linear-gradient(90deg,#2f88ee 49%,#a8b9ca 49%)}.money{display:flex;align-items:center}.money span{flex:1;text-align:center;color:#1680cc;font-size:7px}.money b{display:block;color:#555;font-weight:500}.money button{height:21px;padding:0 6px;border:1px solid #3c8c1a;border-radius:4px;color:#216d1b;font-size:8px;font-weight:900;background:linear-gradient(#9fec4e,#43ad13)}.bottom-icons{display:flex;align-items:center;justify-content:space-around}.bottom-icons button{padding:0;color:#1884e5;font-size:17px;background:transparent}.toast{position:absolute;z-index:50;left:50%;top:48%;transform:translate(-50%,-50%);padding:7px 17px;border:2px solid #8bddff;border-radius:999px;color:#fff;font-size:11px;font-weight:900;background:rgba(17,82,153,.94);box-shadow:0 6px 22px rgba(28,50,112,.45),inset 0 1px #fff;pointer-events:none}.hidden{display:none!important}
+    .rail-slot.blocked{border-color:#ff594f;color:#fff;background:linear-gradient(145deg,#ff8074,#d92832);box-shadow:inset 0 0 0 1px rgba(255,255,255,.72),0 0 6px rgba(223,35,43,.62)}.rail-slot.blocked .block-mark{font-size:17px;font-weight:900;line-height:1;text-shadow:0 1px #8e1520}.rail-slot.blocked:after{background:rgba(115,8,17,.76)}
+    .item-tooltip{position:absolute;z-index:30;left:5px;top:31px;width:214px;max-height:458px;overflow:hidden;padding:9px 9px 10px;border:1px solid #15171a;border-radius:7px;color:#e7e7e7;background:linear-gradient(155deg,rgba(51,52,56,.97),rgba(22,23,26,.98));box-shadow:0 8px 20px rgba(14,26,49,.5),inset 0 0 0 1px rgba(255,255,255,.1);opacity:0;transform:translateY(5px);transition:opacity .12s,transform .12s;pointer-events:none}.item-tooltip.show{opacity:1;transform:translateY(0)}.tooltip-head{display:flex;align-items:center;gap:8px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.11)}.tooltip-head img{width:44px;height:44px;object-fit:contain;border:1px solid #d69d22;border-radius:5px}.tooltip-head h4{margin:0;color:#fff;font-size:11px}.tooltip-head span{display:block;margin-top:3px;color:#9e9fa4;font-size:8px}.tooltip-description{margin:7px 0;color:#ffe12c;font-size:8px;line-height:1.45}.tooltip-rule{margin:6px 0;color:#36f14a;font-size:8px;line-height:1.4}.tooltip-rule b{display:block;color:#fff233;font-weight:500}.tooltip-section{margin:7px 0 4px;color:#c7c8cc;font-size:8px}.tooltip-stats{display:flex;flex-direction:column;gap:1px;font-size:8px;line-height:1.28}.tooltip-stats .green{color:#38ef4c}.tooltip-stats .blue{color:#37c7ff}.tooltip-stats .red{color:#ff4545}.tooltip-stats .gold{color:#ffe13c}.tooltip-extra{margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.1);color:#ff4b4b;font-size:8px}.tooltip-set{margin-top:7px;padding:6px;border:1px solid #6e5b21;border-radius:4px;background:rgba(18,18,18,.62);font-size:8px;line-height:1.35}.tooltip-set b{display:block;margin-bottom:3px;color:#54f258}.tooltip-set span{display:block;color:#ffe33e}.tooltip-set.inactive{filter:grayscale(1);opacity:.58}.tooltip-mode-warning{margin:6px 0;padding:5px 6px;border:1px solid #e69a26;border-radius:4px;color:#ffe36c;font-size:8px;line-height:1.35;background:rgba(103,55,8,.5)}.item-tooltip.role-mode .tooltip-stats,.item-tooltip.role-mode .tooltip-extra{filter:grayscale(1);opacity:.52;text-decoration:line-through}.avatar-mark.role-type{border-color:#525f91;background:#7785bd}.rail{transition:filter .15s,box-shadow .15s,transform .15s}.rail:not(.active-target){filter:saturate(.55) brightness(.9);opacity:.76}.rail.active-target{transform:translateY(-2px);box-shadow:0 0 0 3px rgba(255,255,255,.8),0 0 13px rgba(28,147,224,.72)}.rail-title{cursor:pointer}.rail.active-target .rail-title:after{content:"✓";margin-left:4px;color:#fff}.target-label{font-weight:900;color:#fff3a0}
+    .rail-slot:focus-visible{outline:2px solid #fff36a;outline-offset:1px}.rail-tooltip{position:absolute;z-index:40;width:226px;max-height:458px;overflow:hidden;padding:9px;border:1px solid #12151a;border-radius:7px;color:#e9edf2;background:linear-gradient(155deg,rgba(53,55,60,.98),rgba(20,22,27,.98));box-shadow:0 8px 20px rgba(14,26,49,.52),inset 0 0 0 1px rgba(255,255,255,.1);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;pointer-events:none}.rail-tooltip.show{opacity:1;transform:translateY(0)}.rail-tooltip-head{display:flex;align-items:center;gap:8px}.rail-tooltip-head img{width:45px;height:45px;flex:0 0 45px;object-fit:contain;border:1px solid #d69d22;border-radius:5px}.rail-tooltip h4{margin:0;color:#fff;font-size:11px}.rail-tooltip .slot-kind{display:block;margin-top:3px;color:#5dd5ff;font-size:8px}.rail-tooltip .slot-empty{margin:6px 0 0;color:#aeb5bf;font-size:9px}.rail-tooltip .slot-state{margin:6px 0 0;color:#65f27a;font-size:8px}.rail-tooltip .slot-state.blocked{color:#ff7676}.rail-tooltip .slot-description{margin:7px 0 0;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);color:#ffe239;font-size:8px;line-height:1.45}.rail-tooltip.role-mode .tooltip-stats,.rail-tooltip.role-mode .tooltip-extra{filter:grayscale(1);opacity:.52;text-decoration:line-through}
+    .stats-summary-panel{position:absolute;z-index:35;left:91px;top:120px;width:244px;height:342px;padding:8px 9px 32px;border:1px solid #111820;border-radius:7px;color:#edf2f6;background:linear-gradient(150deg,rgba(54,58,66,.97),rgba(25,29,38,.98));box-shadow:0 10px 24px rgba(12,25,48,.56),inset 0 0 0 1px rgba(255,255,255,.08)}.summary-tabs{height:25px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.summary-tabs button{padding:0;border:1px solid #78b6dc;border-radius:999px;color:#fff;font-size:8px;font-weight:900;background:linear-gradient(#62bee9,#287fba)}.summary-tabs button.active{border-color:#9ad257;background:linear-gradient(#8acb4c,#3d9129)}.summary-tabs button:disabled{opacity:1;cursor:default}.summary-heading{display:flex;align-items:end;justify-content:space-between;margin:7px 1px 5px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.13)}.summary-heading b{color:#6cf07a;font-size:10px}.summary-heading span{color:#9aa7b4;font-size:7px}.summary-list{display:flex;flex-direction:column;gap:1px}.summary-row{height:14px;display:flex;align-items:center;justify-content:space-between;padding:0 3px;border-radius:2px;font-size:8px;background:rgba(255,255,255,.025)}.summary-row:nth-child(2n){background:rgba(255,255,255,.05)}.summary-row .summary-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dfe5eb}.summary-row .summary-value{margin-left:8px;color:#42ed5c;font-weight:900;white-space:nowrap}.summary-row .summary-value.blue{color:#4ac8ff}.summary-row .summary-value.gold{color:#ffe044}.summary-row .summary-value.red{color:#ff6666}.summary-empty{display:grid;place-items:center;height:215px;color:#9da8b3;font-size:9px}.summary-pager{position:absolute;left:0;right:0;bottom:7px;display:flex;align-items:center;justify-content:center;gap:9px;color:#fff;font-size:8px}.summary-pager button{width:18px;height:17px;padding:0;border:1px solid #59778e;border-radius:3px;color:#fff;background:#263542}.summary-pager button:disabled{opacity:.35}.summary-page-note{min-width:25px;text-align:center}
+    .stats-panel .stat-top{grid-template-columns:minmax(0,1fr) 82px}.stats-panel .stat-row{grid-template-columns:56px minmax(0,1fr) 20px}.stats-panel .stat-buttons{grid-template-columns:1fr}
+    .filterbar .equipment-search{min-width:0;flex:1;height:18px;padding:0 7px;border:1px solid #73c7ef;border-radius:4px;color:#174f78;font-size:8px;background:rgba(255,255,255,.96);outline:none;user-select:text}.filterbar .equipment-search:focus{border-color:#fff36c;box-shadow:0 0 0 1px #fff36c}.filterbar .equipment-search::placeholder{color:#6c91ab}
+    .share-loadout{position:absolute;z-index:9;left:154px;top:282px;width:150px;height:34px;padding:0;border:2px solid #fff;border-radius:999px;color:#fff;font-size:10px;font-weight:900;background:linear-gradient(#67d5ff,#188ad7 62%,#086dbd);box-shadow:0 0 0 2px #41a9df,0 5px 12px rgba(36,83,144,.3),inset 0 1px 2px rgba(255,255,255,.9)}.share-loadout:hover{filter:brightness(1.08)}.share-loadout.copied{background:linear-gradient(#9be95b,#40a920);box-shadow:0 0 0 2px #6fc634,0 5px 12px rgba(36,83,144,.3)}
+  </style>
+</head>
+<body>
+  <div class="viewport" id="viewport">
+    <div class="game" id="game">
+      <header class="titlebar"><span>Tales Runner</span><div class="window-actions"><b>—</b><b>□</b><b>×</b></div></header>
+      <div class="topbar">
+        <div class="tip">♨ <b>TIP.</b> Avatar 裝備只有穿著後，能力值與套裝效果先會生效。</div>
+        <nav class="world-nav"><button>等待室</button><button>公園</button><button>農場</button></nav>
+      </div>
+
+      <main class="workspace">
+        <section class="left-panel">
+          <div class="stats-panel">
+            <div class="stat-top">
+              <div class="stats-list">
+                <div class="stat-row"><span>最高速度</span><i><em data-base-bar="最高速度" style="width:40%;background:#ef3d3d"></em><em class="bonus-bar" data-bonus-bar="最高速度"></em></i><b data-top-value="最高速度">6</b></div>
+                <div class="stat-row"><span>加速度</span><i><em data-base-bar="加速度" style="width:26.67%;background:#f05ac8"></em><em class="bonus-bar" data-bonus-bar="加速度"></em></i><b data-top-value="加速度">4</b></div>
+                <div class="stat-row"><span>力量</span><i><em data-base-bar="力量" style="width:33.33%;background:#278cff"></em><em class="bonus-bar" data-bonus-bar="力量"></em></i><b data-top-value="力量">5</b></div>
+                <div class="stat-row"><span>控制</span><i><em data-base-bar="控制" style="width:26.67%;background:#f2a126"></em><em class="bonus-bar" data-bonus-bar="控制"></em></i><b data-top-value="控制">4</b></div>
+              </div>
+              <div class="stat-buttons"><button class="luck">幸運<br><b id="luckValue">300.00%</b></button></div>
+            </div>
+            <div class="mini-rows">
+              <div class="mini-row"><span>跑者</span><i>♠</i><i>◆</i><i>♣</i><i>●</i><i>♠</i><i>◆</i><i class="dark">♣</i><i class="dark">●</i><i class="dark">♠</i><i class="dark">◆</i><i class="dark">♣</i><i class="dark">●</i><i class="dark">♠</i></div>
+              <div class="mini-row"><span>故事</span><i>●</i><i>♠</i><i>◆</i><i>♣</i><i>●</i><i>♠</i><i>◆</i><i>♣</i><i>●</i><i>♠</i><i>◆</i><i>♣</i><i>●</i></div>
+              <div class="mini-row"><span>聯名</span><i>◆</i><i>♣</i><i>●</i><i>♠</i><i>◆</i><i>♣</i><i>●</i><i>♠</i><i>◆</i><i class="empty">.</i><i class="empty">.</i><i class="empty">.</i><i class="empty">.</i></div>
+            </div>
+          </div>
+
+          <div class="room">
+            <div class="window"><span class="cloud a"></span><span class="cloud b"></span></div>
+            <div class="plant"><i></i><i></i><i></i><i></i><span></span></div>
+            <button class="fashion">♚ 時尚達人</button>
+            <div class="name-ribbon">☆ 影子 (軒少) ☆</div>
+
+            <div class="rail avatar active-target" data-loadout="avatar">
+              <button class="rail-title" data-loadout-target="avatar">Avatar</button>
+              <div class="rail-grid" id="avatarRail"></div>
+              <button class="rail-footer" data-stats-target="avatar"><span class="check-box">✓</span><span>隱藏能力值</span></button>
+            </div>
+
+            <div class="rail role" data-loadout="role">
+              <button class="rail-title" data-loadout-target="role">角色</button>
+              <div class="rail-grid" id="roleRail"></div>
+              <button class="rail-footer" data-stats-target="role"><span class="check-box">✓</span><span>隱藏能力值</span></button>
+            </div>
+
+            <div class="rail-tooltip" id="railTooltip" role="tooltip" aria-hidden="true"></div>
+
+            <section class="stats-summary-panel hidden" id="statsSummaryPanel" aria-label="整體裝備能力值">
+              <nav class="summary-tabs" aria-label="能力值分類"><button class="active">整體</button><button disabled>跑步</button><button disabled>成長</button><button disabled>活動</button></nav>
+              <div class="summary-heading"><b id="summaryTitle">Avatar・整體能力值</b><span id="summarySource">Avatar＋角色裝備</span></div>
+              <div class="summary-list" id="summaryList"></div>
+              <div class="summary-pager"><button id="summaryPrev" aria-label="上一頁">‹</button><span class="summary-page-note" id="summaryPage">1 / 1</span><button id="summaryNext" aria-label="下一頁">›</button></div>
+            </section>
+
+            <button class="share-loadout" id="shareLoadoutBtn">🔗 分享配裝</button>
+            <div class="no-model" id="targetHint">目前套用：Avatar 裝備</div>
+          </div>
+        </section>
+
+        <section class="wardrobe">
+          <nav class="category-tabs"><button data-category="主要">主要</button><button data-category="角色">角色</button><button data-category="服裝" class="active">服裝</button><button data-category="飾品">飾品</button><button data-category="寵物">寵物</button><button data-category="其他">其他</button><button data-category="材料">材料</button></nav>
+          <div class="wardrobe-body">
+            <div class="wardrobe-links"><div class="subtab-list" id="subtabList"></div></div>
+            <div class="wardrobe-grid" id="wardrobeGrid"></div>
+            <div class="item-tooltip" id="itemTooltip" aria-hidden="true"></div>
+          </div>
+          <footer class="wardrobe-footer">
+            <div class="search">⌕</div>
+            <div class="filterbar"><input class="equipment-search" id="equipmentSearch" type="search" placeholder="搜尋裝備名稱、分類、description 或 stats…" autocomplete="off" aria-label="搜尋裝備"></div>
+          </footer>
+        </section>
+      </main>
+
+      <footer class="bottom">
+        <div class="player"><span class="rank">N</span><img class="portrait" src="assets/ranks/red-chicken.webp" alt="紅色小雞"><div class="player-copy"><b>哈哈哈密瓜12</b><i class="exp">EXP 49.06%</i></div></div>
+        <div class="money"><span>TR<b>76,414,427</b></span><span>點數<b>26</b></span><span>MAU<b>56,008</b></span></div>
+      </footer>
+      <div class="toast hidden" id="toast"></div>
+    </div>
+  </div>
+
+  <script>
+    const items = [
+      {id:'craft-agent-hat',equipmentType:'avatar',setId:'craft-agent',name:'工藝代理人帽子(男)',img:'assets/items/craft-agent-hat.png',category:'飾品',subcategory:'頭部',occupancy:'頭部＋髮型',primarySlot:'head',slots:['head','hair'],description:'傳說中的工藝代理人制服帽。未被記錄的某個瞬間，由工藝代理人留下。',stats:[['幸運 +80%','green'],['力量 +1','blue'],['bonus EXP +25%','blue'],['bonus TR +25%','blue'],['強化對戰頻道攻擊 +5%','red'],['最大體力值 +20%','gold'],['每回合最大獲得經驗值 +1000','gold'],['童話藝術頻道 bonus EXP +50%','green'],['童話藝術頻道 bonus TR +50%','green'],['童話藝術頻道貢獻點數 +10%','green']],extra:'傳染時攻擊速度 +2'},
+      {id:'craft-agent-outfit',equipmentType:'avatar',setId:'craft-agent',name:'工藝代理人服裝(男)',img:'assets/items/craft-agent-outfit.png',category:'服裝',subcategory:'上衣',occupancy:'上衣＋褲/裙',primarySlot:'upper',slots:['upper','lower'],description:'傳說中的工藝代理人制服。未被記錄的某個瞬間，由工藝代理人留下。',stats:[['幸運 +50%','green'],['控制 +2','blue'],['bonus EXP +75%','blue'],['bonus TR +25%','blue'],['變身結束時體力恢復 +1%','blue'],['強化對戰頻道攻擊 +5%','red'],['最大體力值 +3%','gold'],['每回合最大獲得經驗值 +1000','gold'],['童話藝術頻道 bonus EXP +50%','green'],['童話藝術頻道 bonus TR +50%','green'],['童話藝術頻道貢獻點數 +10%','green']],extra:'傳染時攻擊速度 +2'},
+      {id:'craft-agent-shoes',equipmentType:'avatar',setId:'craft-agent',name:'工藝代理人鞋子(男)',img:'assets/items/craft-agent-shoes.png',category:'服裝',subcategory:'鞋子',occupancy:'鞋子',primarySlot:'shoes',slots:['shoes'],description:'傳說中的工藝代理人制服鞋。未被記錄的某個瞬間，由工藝代理人留下。',stats:[['幸運 +50%','green'],['加速度 +1','blue'],['bonus EXP +45%','blue'],['bonus TR +15%','blue'],['變身結束時體力恢復 +3%','blue'],['最大體力值 +10%','gold'],['每回合最大獲得經驗值 +600','gold'],['童話藝術頻道 bonus EXP +35%','green'],['童話藝術頻道 bonus TR +35%','green'],['童話藝術頻道貢獻點數 +8%','green']],extra:'傳染時攻擊速度 +2'},
+      {id:'crescent-hair',equipmentType:'role',setId:'crescent-radiance',name:'新月交輝髮型(男)-T',img:'assets/items/crescent-hair.png',category:'服裝',subcategory:'髮型',occupancy:'髮型',primarySlot:'hair',slots:['hair'],description:'金色月亮和星星點綴的天空，蘊藏著這天空下所有優雅的新月交輝髮型。',stats:[['幸運 +65%','green'],['力量 +1','blue'],['bonus EXP +40%','blue'],['bonus TR +40%','blue'],['抵抗暈眩 +80%','blue'],['障礙持續時間減少 +35%','blue'],['傳染時攻擊速度 +10%','red'],['傳染持續時間 +10%','red'],['強化對戰頻道攻擊 +2%','red'],['最大體力值 +5%','gold'],['童話藝術頻道 bonus EXP +30%','green'],['童話藝術頻道 bonus TR +30%','green'],['童話藝術頻道貢獻點數 +6%','green'],['bonus TR +30%','gold'],['bonus EXP +20%','gold']],extra:''},
+      {id:'crescent-outfit',equipmentType:'role',setId:'crescent-radiance',name:'新月交輝正裝(男)-T',img:'assets/items/crescent-outfit.png',category:'服裝',subcategory:'上衣',occupancy:'上衣＋褲/裙',primarySlot:'upper',slots:['upper','lower'],description:'金色月亮和星星點綴的天空，蘊藏著這天空下所有優雅的新月交輝正裝。',stats:[['幸運 +5%','green'],['控制 +6','blue'],['bonus EXP +85%','blue'],['bonus TR +65%','blue'],['變身結束時體力恢復 +10%','blue'],['傳染時攻擊速度 +15%','red'],['傳染持續時間 +15%','red'],['強化對戰頻道攻擊 +5%','red'],['最大體力值 +5%','gold'],['童話藝術頻道 bonus EXP +30%','green'],['童話藝術頻道 bonus TR +60%','green'],['童話藝術頻道貢獻點數 +6%','green']],extra:''},
+      {id:'crescent-shoes',equipmentType:'role',setId:'crescent-radiance',name:'新月交輝鞋子(男)-T',img:'assets/items/crescent-shoes.png',category:'服裝',subcategory:'鞋子',occupancy:'鞋子',primarySlot:'shoes',slots:['shoes'],description:'金色月亮和星星點綴的天空，蘊藏著這天空下所有優雅的新月交輝鞋子。',stats:[['最高速度 +4','blue'],['加速度 +3','blue'],['bonus EXP +45%','blue'],['bonus TR +45%','blue'],['變身成功時持續時間增加 +1.5','blue'],['傳染時攻擊速度 +15%','red'],['傳染持續時間 +15%','red'],['強化對戰頻道攻擊 +2%','red'],['最大體力值 +5%','gold'],['童話藝術頻道 bonus EXP +30%','green'],['童話藝術頻道 bonus TR +30%','green'],['童話藝術頻道貢獻點數 +6%','green'],['bonus TR +30%','gold'],['bonus EXP +20%','gold']],extra:''}
+    ];
+    const setDefs={
+      'craft-agent':{name:'工藝代理人 男生組合',shortName:'工藝代理人',equipmentType:'avatar',stats:[['bonus TR +75%','green'],['bonus EXP +225%','green'],['幸運 +120%','green'],['每回合最大獲得經驗值 +1150','gold']],special:['傳染時攻擊速度增加']},
+      'crescent-radiance':{name:'新月交輝男生組合(時限版)',shortName:'新月交輝',equipmentType:'role',stats:[['bonus TR +20%','gold'],['bonus EXP +20%','gold']],special:[]}
+    };
+    const slotDefs=[
+      ['head','頭部','♙'],['hair','髮型','〽'],['face','臉部','◉'],
+      ['upper','上衣','♜'],['neck','頸部','♢'],['lower','褲/裙','▥'],
+      ['hands','手部','✦'],['shoes','鞋子','⌁'],['bracelet','手環','⊙'],
+      ['pet','寵物','♨'],['back','背部','◇'],['special','特殊','☆'],
+      ['booster','助推器','»'],['jewelry','珠寶','◆'],['tail','尾','≈']
+    ];
+    const baseStats={'最高速度':6,'加速度':4,'力量':5,'控制':4};
+    const statsPerPage=15;
+    const equipped={
+      avatar:{'craft-agent-hat':true,'craft-agent-outfit':true,'craft-agent-shoes':true,'crescent-hair':false,'crescent-outfit':false,'crescent-shoes':false},
+      role:{'craft-agent-hat':false,'craft-agent-outfit':false,'craft-agent-shoes':false,'crescent-hair':true,'crescent-outfit':true,'crescent-shoes':true}
+    };
+    const subtabsByCategory={
+      '主要':['全部'],'角色':['全部'],'服裝':['髮型','上衣','褲/裙','鞋子'],
+      '飾品':['頭部','臉部','頸部','手部','手環','背部','特殊','助推器','珠寶','尾'],
+      '寵物':['寵物'],'其他':['全部'],'材料':['全部']
+    };
+    const defaultSubtab={'服裝':'上衣','飾品':'頭部'};
+    let selectedCategory='服裝';
+    let selectedSubtab='上衣';
+    let activeLoadout='avatar';
+    let searchQuery='';
+    const statsSources={avatar:false,role:false};
+    let statsPage=0;
+    const avatarRail=document.getElementById('avatarRail');
+    const roleRail=document.getElementById('roleRail');
+    const grid=document.getElementById('wardrobeGrid');
+    const wardrobeBody=document.querySelector('.wardrobe-body');
+    const toast=document.getElementById('toast');
+    const subtabList=document.getElementById('subtabList');
+    const itemTooltip=document.getElementById('itemTooltip');
+    const railTooltip=document.getElementById('railTooltip');
+    const room=document.querySelector('.room');
+    const statsSummaryPanel=document.getElementById('statsSummaryPanel');
+    const summaryTitle=document.getElementById('summaryTitle');
+    const summarySource=document.getElementById('summarySource');
+    const summaryList=document.getElementById('summaryList');
+    const summaryPage=document.getElementById('summaryPage');
+    const summaryPrev=document.getElementById('summaryPrev');
+    const summaryNext=document.getElementById('summaryNext');
+    const luckValue=document.getElementById('luckValue');
+    const targetHint=document.getElementById('targetHint');
+    const equipmentSearch=document.getElementById('equipmentSearch');
+    const shareLoadoutBtn=document.getElementById('shareLoadoutBtn');
+    let toastTimer;
+    let shareButtonTimer;
+
+    function notify(message){clearTimeout(toastTimer);toast.textContent=message;toast.classList.remove('hidden');toastTimer=setTimeout(()=>toast.classList.add('hidden'),1300)}
+    function applySharedLoadout(){
+      if(!location.hash)return;
+      const params=new URLSearchParams(location.hash.slice(1));
+      if(params.get('v')!=='1')return;
+      ['avatar','role'].forEach(target=>{
+        if(!params.has(target))return;
+        items.forEach(item=>equipped[target][item.id]=false);
+        const occupiedSlots=new Set();
+        params.get(target).split(',').filter(Boolean).forEach(id=>{
+          const item=items.find(candidate=>candidate.id===id);
+          if(!item||item.slots.some(slot=>occupiedSlots.has(slot)))return;
+          equipped[target][item.id]=true;
+          item.slots.forEach(slot=>occupiedSlots.add(slot));
+        });
+      });
+      const sharedView=params.get('view');
+      if(sharedView==='avatar'||sharedView==='role')activeLoadout=sharedView;
+    }
+    function buildShareUrl(){
+      const avatarIds=items.filter(item=>equipped.avatar[item.id]).map(item=>item.id);
+      const roleIds=items.filter(item=>equipped.role[item.id]).map(item=>item.id);
+      const url=new URL(location.href);
+      url.hash=`v=1&avatar=${avatarIds.join(',')}&role=${roleIds.join(',')}&view=${activeLoadout}`;
+      return url.toString();
+    }
+    function syncLoadoutUrl(){
+      const shareUrl=buildShareUrl();
+      try{history.replaceState(null,'',shareUrl)}catch{location.hash=shareUrl.split('#')[1]||''}
+      return shareUrl;
+    }
+    function fallbackCopy(text){
+      const textarea=document.createElement('textarea');
+      textarea.value=text;textarea.style.position='fixed';textarea.style.opacity='0';
+      document.body.appendChild(textarea);textarea.select();
+      const copied=document.execCommand('copy');textarea.remove();return copied;
+    }
+    async function shareCurrentLoadout(){
+      const shareUrl=buildShareUrl();
+      let copied=false;
+      try{await navigator.clipboard.writeText(shareUrl);copied=true}catch{copied=fallbackCopy(shareUrl)}
+      clearTimeout(shareButtonTimer);
+      shareLoadoutBtn.textContent=copied?'✓ 分享連結已複製':'✓ 配裝已寫入 URL';
+      shareLoadoutBtn.classList.add('copied');
+      shareButtonTimer=setTimeout(()=>{shareLoadoutBtn.textContent='🔗 分享配裝';shareLoadoutBtn.classList.remove('copied')},1800);
+    }
+    function getEffectiveItemsFor(target){
+      const characterItems=items.filter(item=>item.equipmentType==='role'&&equipped.role[item.id]);
+      const avatarItems=target==='avatar'?items.filter(item=>item.equipmentType==='avatar'&&equipped.avatar[item.id]):[];
+      return [...characterItems,...avatarItems];
+    }
+    function getEffectiveItems(){return getEffectiveItemsFor(activeLoadout)}
+    function isSetActive(setId){
+      const definition=setDefs[setId];
+      const setItems=items.filter(item=>item.setId===setId);
+      return Boolean(definition&&setItems.length&&setItems.every(item=>equipped[definition.equipmentType][item.id]));
+    }
+    function getModeRule(item,target){
+      if(item.equipmentType===target){
+        return target==='avatar'?'<div class="tooltip-rule">[Avatar 裝備欄穿用時發動能力值]<b>※ Avatar view 會再疊加角色裝備能力值</b><b>※ 男角色專屬道具</b></div>':'<div class="tooltip-rule">[角色裝備欄穿用時發動能力值]<b>※ 此角色裝備能力值正常生效</b><b>※ 男角色專屬道具</b></div>';
+      }
+      const correctTarget=item.equipmentType==='avatar'?'Avatar':'角色';
+      const currentTarget=target==='avatar'?'Avatar':'角色';
+      return `<div class="tooltip-mode-warning">[${currentTarget} 裝備欄]<br>此物品屬於 ${correctTarget} 裝備，放在這裡只顯示外觀；能力值及套裝效果不會生效。</div>`;
+    }
+    function getSetTooltipMarkup(item,target){
+      const definition=setDefs[item.setId];
+      if(!definition)return '';
+      const active=item.equipmentType===target&&isSetActive(item.setId);
+      return `<div class="tooltip-set ${active?'':'inactive'}"><b>${definition.name} ${active?'・生效中':'・未生效'}</b>${definition.stats.map(([text])=>`<span>${text}</span>`).join('')}${definition.special.map(text=>`<span>${text}</span>`).join('')}</div>`;
+    }
+    function getTopStatTotals(){
+      const totals=new Map();
+      const addTextStat=text=>{
+        const match=text.match(/^(.+?)\s+\+([\d,.]+)(%)?$/);
+        if(!match)return;
+        const name=match[1];
+        const value=Number(match[2].replaceAll(',',''));
+        totals.set(name,(totals.get(name)||0)+value);
+      };
+      getEffectiveItemsFor(activeLoadout).forEach(item=>{
+        item.stats.forEach(([text])=>addTextStat(text));
+        if(item.extra)addTextStat(item.extra);
+      });
+      const effectiveTypes=activeLoadout==='avatar'?new Set(['avatar','role']):new Set(['role']);
+      Object.entries(setDefs).filter(([setId,definition])=>effectiveTypes.has(definition.equipmentType)&&isSetActive(setId)).forEach(([,definition])=>definition.stats.forEach(([text])=>addTextStat(text)));
+      return totals;
+    }
+    function renderTopStats(){
+      const totals=getTopStatTotals();
+      Object.entries(baseStats).forEach(([name,base])=>{
+        const modifier=totals.get(name)||0;
+        const appliedModifier=Math.max(0,Math.min(modifier,15-base));
+        const total=Math.min(15,base+appliedModifier);
+        const valueNode=document.querySelector(`[data-top-value="${name}"]`);
+        const baseBarNode=document.querySelector(`[data-base-bar="${name}"]`);
+        const bonusBarNode=document.querySelector(`[data-bonus-bar="${name}"]`);
+        valueNode.textContent=formatStatNumber(total);
+        valueNode.title=`基本 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 15）`;
+        baseBarNode.style.width=`${base/15*100}%`;
+        bonusBarNode.style.width=`${appliedModifier/15*100}%`;
+      });
+      const luck=totals.get('幸運')||0;
+      luckValue.textContent=`${luck.toFixed(2)}%`;
+      luckValue.title=`目前有效裝備幸運：${luck.toFixed(2)}%`;
+    }
+    function showTooltip(item,card){
+      const statEligible=item.equipmentType===activeLoadout;
+      itemTooltip.innerHTML=`
+        <div class="tooltip-head"><img src="${item.img}" alt=""><div><h4>${item.name}</h4><span>${item.category} → ${item.subcategory}・佔用 ${item.occupancy}</span></div></div>
+        <p class="tooltip-description">${item.description}</p>
+        ${getModeRule(item,activeLoadout)}
+        <div class="tooltip-section">[附加功能]</div>
+        <div class="tooltip-stats">${item.stats.map(([text,tone])=>`<span class="${tone}">${text}</span>`).join('')}</div>
+        ${item.extra?`<div class="tooltip-section">[${item.equipmentType==='avatar'?'Avatar':'角色'} 裝備附加功能]</div><div class="tooltip-extra">${item.extra}</div>`:''}
+        ${getSetTooltipMarkup(item,activeLoadout)}`;
+      itemTooltip.classList.toggle('role-mode',!statEligible);itemTooltip.classList.add('show');itemTooltip.setAttribute('aria-hidden','false');
+      const gap=8;
+      const tooltipWidth=itemTooltip.offsetWidth;
+      const tooltipHeight=itemTooltip.offsetHeight;
+      const rightPosition=card.offsetLeft+card.offsetWidth+gap;
+      const leftPosition=card.offsetLeft-tooltipWidth-gap;
+      const fitsRight=rightPosition+tooltipWidth<=wardrobeBody.clientWidth-4;
+      itemTooltip.style.left=`${Math.max(4,Math.min(fitsRight?rightPosition:leftPosition,wardrobeBody.clientWidth-tooltipWidth-4))}px`;
+      itemTooltip.style.top=`${Math.max(4,Math.min(card.offsetTop,wardrobeBody.clientHeight-tooltipHeight-4))}px`;
+    }
+    function hideTooltip(){itemTooltip.classList.remove('show');itemTooltip.setAttribute('aria-hidden','true')}
+    function showRailTooltip(slot,target){
+      const label=slot.dataset.slotLabel;
+      const item=items.find(candidate=>candidate.id===slot.dataset.itemId);
+      const targetName=target==='avatar'?'Avatar':'角色';
+      if(!item){
+        railTooltip.innerHTML=`<h4>${label}</h4><span class="slot-kind">${targetName}裝備欄位</span><p class="slot-empty">目前未有裝備</p>`;
+        railTooltip.classList.remove('role-mode');
+      }else{
+        const blocked=slot.classList.contains('blocked');
+        const statEligible=item.equipmentType===target;
+        railTooltip.innerHTML=`
+          <div class="rail-tooltip-head"><img src="${item.img}" alt=""><div><h4>${item.name}</h4><span class="slot-kind">${targetName}・${label}・佔用 ${item.occupancy}</span></div></div>
+          <p class="slot-state ${blocked?'blocked':''}">${blocked?`${label}格已被此裝備佔用`:`裝備於${label}格`}</p>
+          <p class="slot-description">${item.description}</p>
+          ${getModeRule(item,target)}
+          <div class="tooltip-section">[附加功能]</div>
+          <div class="tooltip-stats">${item.stats.map(([text,tone])=>`<span class="${tone}">${text}</span>`).join('')}</div>
+          ${item.extra?`<div class="tooltip-section">[${item.equipmentType==='avatar'?'Avatar':'角色'} 裝備附加功能]</div><div class="tooltip-extra">${item.extra}</div>`:''}
+          ${getSetTooltipMarkup(item,target)}`;
+        railTooltip.classList.toggle('role-mode',!statEligible);
+      }
+      railTooltip.classList.add('show');railTooltip.setAttribute('aria-hidden','false');
+      const rail=slot.closest('.rail');
+      railTooltip.style.left=target==='avatar'?'97px':'105px';
+      const desiredTop=rail.offsetTop+slot.offsetTop-5;
+      railTooltip.style.top=`${Math.max(6,Math.min(desiredTop,room.clientHeight-railTooltip.offsetHeight-8))}px`;
+    }
+    function hideRailTooltip(){railTooltip.classList.remove('show');railTooltip.setAttribute('aria-hidden','true')}
+    function formatStatNumber(value){
+      return Number(value).toLocaleString('en-US',{maximumFractionDigits:2});
+    }
+    function getCheckedStatItems(){
+      const avatarItems=statsSources.avatar?items.filter(item=>item.equipmentType==='avatar'&&equipped.avatar[item.id]):[];
+      const roleItems=statsSources.role?items.filter(item=>item.equipmentType==='role'&&equipped.role[item.id]):[];
+      return [...avatarItems,...roleItems];
+    }
+    function getIntegratedStatRows(){
+      const totals=new Map();
+      const addTextStat=(text,tone='green')=>{
+        const match=text.match(/^(.+?)\s+\+([\d,.]+)(%)?$/);
+        if(!match)return;
+        const name=match[1];
+        const value=Number(match[2].replaceAll(',',''));
+        const unit=match[3]||'';
+        const current=totals.get(name)||{value:0,unit,tone};
+        current.value+=value;
+        totals.set(name,current);
+      };
+      getCheckedStatItems().forEach(item=>{
+        item.stats.forEach(([text,tone])=>addTextStat(text,tone));
+        if(item.extra)addTextStat(item.extra,'red');
+      });
+      const activeSets=Object.entries(setDefs).filter(([setId,definition])=>statsSources[definition.equipmentType]&&isSetActive(setId));
+      activeSets.forEach(([,definition])=>definition.stats.forEach(([text,tone])=>addTextStat(text,tone)));
+      const rows=Object.entries(baseStats).map(([name,base])=>{
+        const modifier=totals.get(name)?.value||0;
+        totals.delete(name);
+        const appliedModifier=Math.max(0,Math.min(modifier,15-base));
+        return {name,value:`${formatStatNumber(Math.min(15,base+appliedModifier))}${modifier?` (+${formatStatNumber(appliedModifier)})`:''}`,tone:modifier?'blue':'green'};
+      });
+      const preferred=['幸運','bonus EXP','bonus TR','抵抗暈眩','障礙持續時間減少','強化對戰頻道攻擊','最大體力值','每回合最大獲得經驗值','童話藝術頻道 bonus EXP','童話藝術頻道 bonus TR','童話藝術頻道貢獻點數','變身結束時體力恢復','變身成功時持續時間增加','傳染時攻擊速度','傳染持續時間'];
+      const ordered=[...totals.entries()].sort(([a],[b])=>{
+        const ai=preferred.indexOf(a);const bi=preferred.indexOf(b);
+        return (ai<0?999:ai)-(bi<0?999:bi);
+      });
+      ordered.forEach(([name,data])=>rows.push({name,value:`+${formatStatNumber(data.value)}${data.unit}`,tone:data.tone}));
+      activeSets.forEach(([,definition])=>definition.special.forEach(text=>rows.push({name:`套裝：${text}`,value:'生效',tone:'gold'})));
+      return rows;
+    }
+    function renderStatsSummary(){
+      document.querySelectorAll('[data-stats-target]').forEach(button=>button.classList.toggle('open',statsSources[button.dataset.statsTarget]));
+      const open=statsSources.avatar||statsSources.role;
+      statsSummaryPanel.classList.toggle('hidden',!open);
+      if(!open)return;
+      const rows=getIntegratedStatRows();
+      const pageCount=Math.max(1,Math.ceil(rows.length/statsPerPage));
+      statsPage=Math.min(statsPage,pageCount-1);
+      const pageRows=rows.slice(statsPage*statsPerPage,(statsPage+1)*statsPerPage);
+      const both=statsSources.avatar&&statsSources.role;
+      summaryTitle.textContent=`${both?'Avatar＋角色':statsSources.avatar?'Avatar':'角色'}・整體能力值`;
+      summarySource.textContent=both?'整合兩邊裝備':statsSources.avatar?'只計 Avatar 裝備':'只計角色裝備';
+      summaryList.innerHTML=pageRows.length?pageRows.map(row=>`<div class="summary-row"><span class="summary-name">${row.name}</span><span class="summary-value ${row.tone}">${row.value}</span></div>`).join(''):'<div class="summary-empty">暫時沒有能力值</div>';
+      summaryPage.textContent=`${statsPage+1} / ${pageCount}`;
+      summaryPrev.disabled=statsPage===0;
+      summaryNext.disabled=statsPage>=pageCount-1;
+    }
+    function renderRail(target,element){
+      element.innerHTML=slotDefs.map(([id,label,symbol])=>{
+        const item=items.find(candidate=>equipped[target][candidate.id]&&candidate.slots.includes(id));
+        const isPrimary=item&&item.primarySlot===id;
+        const isBlocked=item&&!isPrimary;
+        const stateClass=isPrimary?'equipped occupied':isBlocked?'blocked occupied':'';
+        const content=isPrimary?`<img src="${item.img}" alt="${item.name}">`:isBlocked?'<span class="block-mark">×</span>':symbol;
+        const stateLabel=isPrimary?label:isBlocked?`${label}已佔用`:'';
+        const ariaText=item?`${label}：${isPrimary?item.name:'被'+item.name+'佔用'}`:`${label}：空裝備欄位`;
+        return `<div class="rail-slot ${stateClass}" data-label="${stateLabel}" data-slot-label="${label}" data-item-id="${item?item.id:''}" tabindex="0" aria-label="${ariaText}">${content}</div>`;
+      }).join('');
+      element.querySelectorAll('.rail-slot').forEach(slot=>{
+        slot.addEventListener('mouseenter',()=>showRailTooltip(slot,target));
+        slot.addEventListener('mouseleave',hideRailTooltip);
+        slot.addEventListener('focus',()=>showRailTooltip(slot,target));
+        slot.addEventListener('blur',hideRailTooltip);
+      });
+    }
+    function renderRails(){
+      hideRailTooltip();
+      renderRail('avatar',avatarRail);
+      renderRail('role',roleRail);
+    }
+    function renderSubtabs(){
+      const tabs=subtabsByCategory[selectedCategory]||['全部'];
+      subtabList.innerHTML=tabs.map(tab=>`<button class="${tab===selectedSubtab?'active':''}" data-subtab="${tab}">${tab}</button>`).join('');
+      subtabList.querySelectorAll('[data-subtab]').forEach(button=>button.addEventListener('click',()=>{selectedSubtab=button.dataset.subtab;renderSubtabs();renderGrid()}));
+    }
+    function renderGrid(){
+      const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
+      const visibleItems=items.filter(item=>{
+        if(!normalizedQuery)return item.category===selectedCategory&&item.subcategory===selectedSubtab;
+        const searchable=[item.name,item.description,item.category,item.subcategory,item.occupancy,item.equipmentType,...item.stats.map(([text])=>text),item.extra].join(' ').toLocaleLowerCase();
+        return searchable.includes(normalizedQuery);
+      });
+      const activeEquipped=equipped[activeLoadout];
+      const cards=visibleItems.map((item,index)=>`<article class="item-card ${activeEquipped[item.id]?'':'not-worn'} ${index===0?'selected':''}" data-id="${item.id}" role="button" tabindex="0" aria-pressed="${Boolean(activeEquipped[item.id])}" aria-label="${activeEquipped[item.id]?'卸下':'穿著'} ${item.name}">
+        <button class="favorite">☆</button><span class="avatar-mark ${item.equipmentType==='role'?'role-type':''}">${item.equipmentType==='avatar'?'A':'R'}</span>
+        <span class="item-icon"><img src="${item.img}" alt="${item.name}"></span>
+        <h3>${item.name}</h3><div class="occupancy">佔用：${item.occupancy}</div>
+        <div class="card-actions"><button class="${activeEquipped[item.id]?'remove':'wear'}" data-action="toggle">${activeEquipped[item.id]?'已穿著':'穿著'}</button><button class="disabled">快捷</button></div>
+      </article>`);
+      while(cards.length<16) cards.push('<div class="empty-card" aria-label="空裝備欄位"></div>');
+      grid.innerHTML=cards.join('');
+      const toggleEquipment=id=>{
+        const item=items.find(value=>value.id===id); const willEquip=!equipped[activeLoadout][id];
+        if(willEquip){items.filter(candidate=>equipped[activeLoadout][candidate.id]&&candidate.slots.some(slot=>item.slots.includes(slot))).forEach(candidate=>equipped[activeLoadout][candidate.id]=false)}
+        equipped[activeLoadout][id]=willEquip;
+        syncLoadoutUrl();
+        const targetName=activeLoadout==='avatar'?'Avatar 裝備':'角色裝備';
+        notify(willEquip?`已穿著「${item.name}」到${targetName}`:`已從${targetName}卸下「${item.name}」`); hideTooltip(); renderAll();
+      };
+      grid.querySelectorAll('[data-action="toggle"]').forEach(button=>button.addEventListener('click',event=>{
+        event.stopPropagation();toggleEquipment(event.target.closest('.item-card').dataset.id);
+      }));
+      grid.querySelectorAll('.item-card').forEach(card=>{
+        const item=items.find(value=>value.id===card.dataset.id);
+        card.addEventListener('mouseenter',()=>showTooltip(item,card));
+        card.addEventListener('mouseleave',hideTooltip);
+        card.addEventListener('focusin',()=>showTooltip(item,card));
+        card.addEventListener('focusout',event=>{if(!card.contains(event.relatedTarget))hideTooltip()});
+        card.addEventListener('click',event=>{if(event.target.closest('button'))return;toggleEquipment(card.dataset.id)});
+        card.addEventListener('keydown',event=>{if(event.target===card&&(event.key==='Enter'||event.key===' ')){event.preventDefault();toggleEquipment(card.dataset.id)}});
+      });
+    }
+    function renderTargetState(){
+      document.querySelectorAll('.rail[data-loadout]').forEach(rail=>rail.classList.toggle('active-target',rail.dataset.loadout===activeLoadout));
+      const name=activeLoadout==='avatar'?'Avatar 裝備':'角色裝備';
+      const effectiveCount=getEffectiveItems().length;
+      targetHint.textContent=activeLoadout==='avatar'?`生效：Avatar 裝備 stats ＋ 角色裝備 stats（${effectiveCount}件）`:`生效：只計角色裝備 stats（${effectiveCount}件）`;
+    }
+    document.querySelectorAll('[data-loadout-target]').forEach(button=>button.addEventListener('click',()=>{
+      activeLoadout=button.dataset.loadoutTarget;syncLoadoutUrl();hideTooltip();hideRailTooltip();renderAll();
+    }));
+    document.querySelectorAll('[data-stats-target]').forEach(button=>button.addEventListener('click',()=>{
+      const target=button.dataset.statsTarget;
+      statsSources[target]=!statsSources[target];
+      statsPage=0;
+      hideTooltip();hideRailTooltip();renderStatsSummary();
+    }));
+    summaryPrev.addEventListener('click',()=>{if(statsPage>0){statsPage-=1;renderStatsSummary()}});
+    summaryNext.addEventListener('click',()=>{statsPage+=1;renderStatsSummary()});
+    shareLoadoutBtn.addEventListener('click',shareCurrentLoadout);
+    equipmentSearch.addEventListener('input',()=>{searchQuery=equipmentSearch.value;hideTooltip();renderGrid()});
+    equipmentSearch.addEventListener('keydown',event=>{if(event.key==='Escape'&&equipmentSearch.value){equipmentSearch.value='';searchQuery='';renderGrid()}});
+    document.querySelectorAll('.category-tabs [data-category]').forEach(button=>button.addEventListener('click',()=>{
+      selectedCategory=button.dataset.category;
+      selectedSubtab=defaultSubtab[selectedCategory]||(subtabsByCategory[selectedCategory]||['全部'])[0];
+      document.querySelectorAll('.category-tabs [data-category]').forEach(tab=>tab.classList.toggle('active',tab===button));
+      renderSubtabs();renderGrid();
+    }));
+    function renderAll(){renderRails();renderSubtabs();renderGrid();renderTargetState();renderStatsSummary();renderTopStats()}
+    function fit(){const scale=Math.min(innerWidth/1020,innerHeight/708);const viewport=document.getElementById('viewport');viewport.style.width=`${1020*scale}px`;viewport.style.height=`${708*scale}px`;document.getElementById('game').style.transform=`scale(${scale})`}
+    addEventListener('resize',fit);applySharedLoadout();fit();renderAll();
+  </script>
+</body>
+</html>
