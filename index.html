@@ -126,8 +126,8 @@
     const baseStats={'最高速度':6,'加速度':4,'力量':5,'控制':4};
     const statsPerPage=15;
     const equipped={
-      avatar:{'craft-agent-hat':true,'craft-agent-outfit':true,'craft-agent-shoes':true,'crescent-hair':false,'crescent-outfit':false,'crescent-shoes':false},
-      role:{'craft-agent-hat':false,'craft-agent-outfit':false,'craft-agent-shoes':false,'crescent-hair':true,'crescent-outfit':true,'crescent-shoes':true}
+      avatar:Object.fromEntries(items.map(item=>[item.id,false])),
+      role:Object.fromEntries(items.map(item=>[item.id,false]))
     };
     const subtabsByCategory={
       '主要':['全部'],'角色':['全部'],'服裝':['髮型','上衣','褲/裙','鞋子'],
