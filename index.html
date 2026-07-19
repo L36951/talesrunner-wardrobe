@@ -469,7 +469,7 @@
       renderSubtabs();renderGrid();
     }));
     function renderAll(){renderRails();renderSubtabs();renderGrid();renderTargetState();renderStatsSummary();renderTopStats()}
-    function fit(){const scale=Math.min(innerWidth/1020,innerHeight/708);const viewport=document.getElementById('viewport');viewport.style.width=`${1020*scale}px`;viewport.style.height=`${708*scale}px`;document.getElementById('game').style.transform=`scale(${scale})`}
+    function fit(){const inset=10;const availableWidth=Math.max(1,innerWidth-inset*2);const availableHeight=Math.max(1,innerHeight-inset*2);const scale=Math.min(availableWidth/1020,availableHeight/708);const viewport=document.getElementById('viewport');viewport.style.width=`${1020*scale}px`;viewport.style.height=`${708*scale}px`;document.getElementById('game').style.transform=`scale(${scale})`}
     addEventListener('resize',fit);applySharedLoadout();fit();renderAll();
   </script>
 </body>
