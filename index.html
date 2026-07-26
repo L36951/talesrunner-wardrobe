@@ -497,7 +497,7 @@
       const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
       const list=Object.entries(characters)
         .filter(([,info])=>!normalizedQuery||info.name.toLocaleLowerCase().includes(normalizedQuery))
-        .sort(([,a],[,b])=>(a.itemNum||0)-(b.itemNum||0));
+        .sort(([,a],[,b])=>(a.order??a.itemNum??0)-(b.order??b.itemNum??0));
       const pageCount=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
       gridPage=Math.min(Math.max(0,gridPage),pageCount-1);
       const cards=list.slice(gridPage*PAGE_SIZE,(gridPage+1)*PAGE_SIZE).map(([id,info])=>{
@@ -597,7 +597,7 @@
       }));
       const list=Object.entries(characters)
         .filter(([,info])=>info.group===charTab)
-        .sort(([,a],[,b])=>(a.itemNum||0)-(b.itemNum||0));
+        .sort(([,a],[,b])=>(a.order??a.itemNum??0)-(b.order??b.itemNum??0));
       const cells=list.slice(0,CHAR_SLOTS).map(([id,info])=>{
         const on=selectedCharacter===id;
         return `<button class="char-slot ${on?'selected':''}" data-char="${id}" title="${info.name}" aria-pressed="${on}" aria-label="${info.name}">${
