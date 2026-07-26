@@ -119,7 +119,8 @@
       const data=await response.json();
       const slotLabel=Object.fromEntries(slotDefs.map(([id,label])=>[id,label]));
       characters=data.characters||{};
-      if(data.statCap)statCap=data.statCap;
+      if(data.baseStatCap)baseStatCap=data.baseStatCap;
+      capRaisers=data.capRaisers||{};
       items=data.items.map(entry=>({
         id:entry.id,
         equipmentType:entry.avatarOnlyStats?'avatar':'role',
@@ -155,9 +156,12 @@
       ['booster','助推器','»'],['jewelry','珠寶','◆'],['tail','尾','≈']
     ];
     // 四項基礎值嚟自所選角色（遊戲資料嘅 attr 17-20）；未揀角色就用 0。
-    // 上限 20 —— wiki 換算表同遊戲資料都係去到 20。
+    // 上限預設 15，要靠裝備嘅「最大值 +N」（attr 271/272/274）先推得高。
+    // 力量嗰個 attr 273 冇任何裝備使用，所以力量實質永遠封頂 15。
     const STAT_KEYS=[['最高速度','speed'],['加速度','accel'],['力量','power'],['控制','control']];
-    let statCap=20;
+    let baseStatCap=15;
+    let capRaisers={};
+    function capFor(name,raiserValue){return baseStatCap+(raiserValue||0)}
     let baseStats={'最高速度':0,'加速度':0,'力量':0,'控制':0};
     function applyCharacterBase(){
       const info=selectedCharacter!=='all'?characters[selectedCharacter]:null;
@@ -316,15 +320,16 @@
       const totals=getTopStatTotals();
       Object.entries(baseStats).forEach(([name,base])=>{
         const modifier=totals.get(name)||0;
-        const appliedModifier=Math.max(0,Math.min(modifier,statCap-base));
-        const total=Math.min(statCap,base+appliedModifier);
+        const cap=capFor(name,capRaisers[name]?totals.get(capRaisers[name]):0);
+        const appliedModifier=Math.max(0,Math.min(modifier,cap-base));
+        const total=Math.min(cap,base+appliedModifier);
         const valueNode=document.querySelector(`[data-top-value="${name}"]`);
         const baseBarNode=document.querySelector(`[data-base-bar="${name}"]`);
         const bonusBarNode=document.querySelector(`[data-bonus-bar="${name}"]`);
         valueNode.textContent=formatStatNumber(total);
-        valueNode.title=`角色 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 ${statCap}）`;
-        baseBarNode.style.width=`${base/statCap*100}%`;
-        bonusBarNode.style.width=`${appliedModifier/statCap*100}%`;
+        valueNode.title=`角色 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 ${cap}${cap>baseStatCap?`＝${baseStatCap}＋最大值提升 ${cap-baseStatCap}`:''}）`;
+        baseBarNode.style.width=`${base/cap*100}%`;
+        bonusBarNode.style.width=`${appliedModifier/cap*100}%`;
       });
       const luck=totals.get('幸運')||0;
       luckValue.textContent=`${luck.toFixed(2)}%`;
@@ -409,8 +414,9 @@
       const rows=Object.entries(baseStats).map(([name,base])=>{
         const modifier=totals.get(name)?.value||0;
         totals.delete(name);
-        const appliedModifier=Math.max(0,Math.min(modifier,statCap-base));
-        return {name,value:`${formatStatNumber(Math.min(statCap,base+appliedModifier))}${modifier?` (+${formatStatNumber(appliedModifier)})`:''}`,tone:modifier?'blue':'green'};
+        const cap=capFor(name,capRaisers[name]?totals.get(capRaisers[name])?.value:0);
+        const appliedModifier=Math.max(0,Math.min(modifier,cap-base));
+        return {name,value:`${formatStatNumber(Math.min(cap,base+appliedModifier))}${modifier?` (+${formatStatNumber(appliedModifier)})`:''}`,tone:modifier?'blue':'green'};
       });
       const preferred=['幸運','bonus EXP','bonus TR','抵抗暈眩','障礙持續時間減少','強化對戰頻道攻擊','最大體力值','每回合最大獲得經驗值','童話藝術頻道 bonus EXP','童話藝術頻道 bonus TR','童話藝術頻道貢獻點數','變身結束時體力恢復','變身成功時持續時間增加','傳染時攻擊速度','傳染持續時間'];
       const ordered=[...totals.entries()].sort(([a],[b])=>{
@@ -505,7 +511,7 @@
       const pick=id=>{
         selectedCharacter=selectedCharacter===id?'all':id;
         characterFilter.value=selectedCharacter;
-        applyCharacterBase();
+        applyCharacterBase();syncLoadoutUrl();
         gridPage=0;renderGrid();renderTopStats();renderStatsSummary();
       };
       grid.querySelectorAll('[data-character]').forEach(card=>{
@@ -584,7 +590,7 @@
       characterFilter.value=selectedCharacter;
     }
     characterFilter.addEventListener('change',()=>{
-      selectedCharacter=characterFilter.value;applyCharacterBase();
+      selectedCharacter=characterFilter.value;applyCharacterBase();syncLoadoutUrl();
       gridPage=0;hideTooltip();renderGrid();renderTopStats();renderStatsSummary();
     });
     equipmentSearch.addEventListener('input',()=>{searchQuery=equipmentSearch.value;gridPage=0;hideTooltip();renderGrid()});
