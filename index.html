@@ -19,7 +19,7 @@
     .stats-panel .stat-top{grid-template-columns:minmax(0,1fr) 82px}.stats-panel .stat-row{grid-template-columns:56px minmax(0,1fr) 20px}.stats-panel .stat-buttons{grid-template-columns:1fr}
     .filterbar .equipment-search{min-width:0;flex:1;height:18px;padding:0 7px;border:1px solid #73c7ef;border-radius:4px;color:#174f78;font-size:8px;background:rgba(255,255,255,.96);outline:none;user-select:text}.filterbar .equipment-search:focus{border-color:#fff36c;box-shadow:0 0 0 1px #fff36c}.filterbar .equipment-search::placeholder{color:#6c91ab}
     .filterbar .character-filter{flex:0 0 auto;max-width:118px;height:18px;padding:0 4px;border:1px solid #73c7ef;border-radius:4px;color:#174f78;font:inherit;font-size:8px;background:rgba(255,255,255,.96);outline:none;cursor:pointer}.filterbar .character-filter:focus{border-color:#fff36c;box-shadow:0 0 0 1px #fff36c}
-    .grid-pager{height:26px;display:flex;align-items:center;justify-content:center;gap:3px;color:#24527b;font-size:9px;white-space:nowrap}.grid-pager .page-gap{width:14px;text-align:center;color:#7fa0bd}.grid-pager [data-goto]{min-width:17px;height:18px;padding:0 3px;border:1px solid #8cc7ea;border-radius:4px;color:#1b6ea8;font-size:9px;font-weight:900;background:linear-gradient(#fff,#e3f3fd)}.grid-pager [data-goto].current{color:#fff;border-color:#0e6ba8;background:linear-gradient(#3fb4ea,#1272b5)}.grid-pager button{width:19px;height:18px;padding:0;border:1px solid #6cb6e2;border-radius:4px;color:#12659f;font-size:10px;font-weight:900;background:linear-gradient(#f1fbff,#a9dcf7)}.grid-pager button:disabled{opacity:.4;cursor:default}.grid-pager .page-note{min-width:56px;text-align:center;font-weight:900}.grid-pager .total-note{color:#5c86a8}
+    .grid-pager{height:26px;display:flex;align-items:center;justify-content:center;gap:3px;color:#24527b;font-size:9px;white-space:nowrap}.grid-pager .page-slot{flex:0 0 auto;width:calc(9px + var(--page-digits,2)*6px)}.grid-pager [data-goto]{flex:0 0 auto;width:calc(9px + var(--page-digits,2)*6px);height:18px;padding:0;font-variant-numeric:tabular-nums;border:0;border-radius:3px;color:#1b6ea8;font-size:9px;font-weight:900;background:transparent}.grid-pager [data-goto]:hover{color:#0a4d7a}.grid-pager [data-goto].current{color:#fff;background:#1272b5}.grid-pager button{width:19px;height:18px;padding:0;border:1px solid #6cb6e2;border-radius:4px;color:#12659f;font-size:10px;font-weight:900;background:linear-gradient(#f1fbff,#a9dcf7)}.grid-pager button:disabled{opacity:.4;cursor:default}.grid-pager .page-note{min-width:56px;text-align:center;font-weight:900}.grid-pager .total-note{color:#5c86a8}
     .icon-missing{display:grid;place-items:center;width:100%;height:100%;color:#c2ccd6;font-size:20px;font-weight:900}
     .share-loadout{position:absolute;z-index:9;left:154px;top:282px;width:150px;height:34px;padding:0;border:2px solid #fff;border-radius:999px;color:#fff;font-size:10px;font-weight:900;background:linear-gradient(#67d5ff,#188ad7 62%,#086dbd);box-shadow:0 0 0 2px #41a9df,0 5px 12px rgba(36,83,144,.3),inset 0 1px 2px rgba(255,255,255,.9)}.share-loadout:hover{filter:brightness(1.08)}.share-loadout.copied{background:linear-gradient(#9be95b,#40a920);box-shadow:0 0 0 2px #6fc634,0 5px 12px rgba(36,83,144,.3)}
   </style>
@@ -543,20 +543,21 @@
       positionSubtabs();
       subtabList.querySelectorAll('[data-subtab]').forEach(button=>button.addEventListener('click',()=>{selectedSubtab=button.dataset.subtab;gridPage=0;renderSubtabs();renderGrid()}));
     }
-    // 視窗式頁碼：永遠顯示首尾，加當前頁 ±2，斷開處用 …
+    // 分頁塊：9 個頁碼一組（1-9、10-18…），著燈嗰個跟返實際頁碼企位，唔會永遠喺中間
+    const PAGER_WINDOW=9;
     function pageWindow(current,pageCount){
-      const span=new Set([0,pageCount-1]);
-      for(let i=current-2;i<=current+2;i++) if(i>=0&&i<pageCount) span.add(i);
-      const sorted=[...span].sort((a,b)=>a-b);
-      const out=[];
-      sorted.forEach((p,i)=>{ if(i&&p-sorted[i-1]>1)out.push('gap'); out.push(p) });
-      return out;
+      const start=Math.floor(current/PAGER_WINDOW)*PAGER_WINDOW;
+      return Array.from({length:Math.min(PAGER_WINDOW,pageCount-start)},(_,i)=>start+i);
     }
     function renderPager(total,pageCount){
       if(!total){gridPager.innerHTML='<span class="total-note">冇符合嘅裝備</span>';return}
-      const nums=pageCount>1?pageWindow(gridPage,pageCount).map(p=>
-        p==='gap'?'<span class="page-gap">…</span>'
-                 :`<button data-goto="${p}" class="${p===gridPage?'current':''}">${p+1}</button>`).join(''):'';
+      // 頁碼闊度只跟總頁數位數走，換頁時唔會因為數字長短而伸縮
+      gridPager.style.setProperty('--page-digits',String(pageCount).length);
+      const pages=pageWindow(gridPage,pageCount);
+      // 最尾一組唔夠 9 個就用空格補位，令前後掣位置一直企定
+      const nums=pageCount>1?pages.map(p=>
+        `<button data-goto="${p}" class="${p===gridPage?'current':''}">${p+1}</button>`).join('')
+        +(pageCount>PAGER_WINDOW?'<span class="page-slot"></span>'.repeat(PAGER_WINDOW-pages.length):''):'';
       gridPager.innerHTML=(pageCount>1?`<button data-page="first" ${gridPage===0?'disabled':''} aria-label="第一頁">«</button>
         <button data-page="prev" ${gridPage===0?'disabled':''} aria-label="上一頁">‹</button>${nums}
         <button data-page="next" ${gridPage>=pageCount-1?'disabled':''} aria-label="下一頁">›</button>
