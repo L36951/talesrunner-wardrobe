@@ -55,7 +55,7 @@
             <div class="window"><span class="cloud a"></span><span class="cloud b"></span></div>
             <div class="plant"><i></i><i></i><i></i><i></i><span></span></div>
             <button class="fashion">♚ 時尚達人</button>
-            <div class="name-ribbon">☆ 影子 (軒少) ☆</div>
+            <div class="name-ribbon" id="nameRibbon">☆ 光光 ☆</div>
 
             <div class="rail avatar active-target" data-loadout="avatar">
               <button class="rail-title" data-loadout-target="avatar">Avatar</button>
@@ -175,7 +175,6 @@
     function capFor(name,raiserValue){return baseStatCap+(raiserValue||0)}
     // 角色限制：blockedFor = 白名單以外（著唔到）；noVisualFor = 著到但唔會變外觀
     function blockedForSelected(item){
-      if(selectedCharacter==='all')return false;
       // 呢個角色冇呢件裝備嘅模型／貼圖＝根本 render 唔到（性別限制亦係咁嚟）
       if(item.wearGroup!=null){
         const g=wearGroups[item.wearGroup];
@@ -189,14 +188,13 @@
       return !!item.blockedFor&&item.blockedFor.includes(Number(selectedCharacter));
     }
     function noVisualForSelected(item){
-      if(selectedCharacter==='all'||item.noVisualFor==null)return false;
+      if(item.noVisualFor==null)return false;
       const g=noVisualGroups[item.noVisualFor];
       return !!g&&g.includes(Number(selectedCharacter));
     }
     let baseStats={'最高速度':0,'加速度':0,'力量':0,'控制':0};
     function applyCharacterBase(){
-      const info=selectedCharacter!=='all'?characters[selectedCharacter]:null;
-      const s=info&&info.stats||{};
+      const s=characters[selectedCharacter]?.stats||{};
       baseStats=Object.fromEntries(STAT_KEYS.map(([label,key])=>[label,s[key]||0]));
     }
     const statsPerPage=15;
@@ -228,7 +226,16 @@
     let searchQuery='';
     const PAGE_SIZE=16;
     let gridPage=0;
-    let selectedCharacter='all';
+    // 跟返隻 game：角色欄一定著住一個，冇「乜都唔揀」呢個狀態
+    const DEFAULT_CHARACTER='1'; // 光光
+    let selectedCharacter=DEFAULT_CHARACTER;
+    function ensureCharacter(){
+      if(characters[selectedCharacter])return;
+      selectedCharacter=characters[DEFAULT_CHARACTER]?DEFAULT_CHARACTER
+        :(Object.entries(characters).sort(([,a],[,b])=>(a.order??a.itemNum??0)-(b.order??b.itemNum??0))[0]||[DEFAULT_CHARACTER])[0];
+    }
+    // 角色格要跳去嗰隻角色嘅分組，唔係就會停喺跑者 tab、乜都唔著燈
+    function focusCharacterTab(){const group=characters[selectedCharacter]?.group;if(group)charTab=group}
     const statsSources={avatar:false,role:false};
     let statsPage=0;
     const avatarRail=document.getElementById('avatarRail');
@@ -253,6 +260,7 @@
     const equipmentSearch=document.getElementById('equipmentSearch');
     const charTabs=document.getElementById('charTabs');
     const charGrid=document.getElementById('charGrid');
+    const nameRibbon=document.getElementById('nameRibbon');
     const shareLoadoutBtn=document.getElementById('shareLoadoutBtn');
     let toastTimer;
     let shareButtonTimer;
@@ -276,9 +284,8 @@
       const sharedView=params.get('view');
       if(sharedView==='avatar'||sharedView==='role')activeLoadout=sharedView;
       const sharedChar=params.get('char');
-      if(sharedChar&&(sharedChar==='all'||characters[sharedChar]))selectedCharacter=sharedChar;
-      // 角色格要跳去嗰隻角色嘅分組，唔係就會停喺跑者 tab、乜都唔著燈
-      if(characters[selectedCharacter]?.group)charTab=characters[selectedCharacter].group;
+      // 舊連結有 char=all，而家冇咗呢個狀態，會跌返落 ensureCharacter() 嘅預設
+      if(sharedChar&&characters[sharedChar])selectedCharacter=sharedChar;
     }
     function buildShareUrl(){
       const avatarIds=equippedItems('avatar').map(item=>item.id);
@@ -575,10 +582,10 @@
       gridPage=Math.min(Math.max(0,gridPage),pageCount-1);
       const cards=list.slice(gridPage*PAGE_SIZE,(gridPage+1)*PAGE_SIZE).map(([id,info])=>{
         const active=selectedCharacter===id;
-        return `<article class="item-card ${active?'selected':''}" data-character="${id}" role="button" tabindex="0" aria-pressed="${active}" aria-label="篩選 ${info.name} 嘅裝備">
+        return `<article class="item-card ${active?'selected':''}" data-character="${id}" role="button" tabindex="0" aria-pressed="${active}" aria-label="${active?`已著住 ${info.name}`:`換上 ${info.name}`}">
         <span class="item-icon">${info.icon?`<img src="${ICON_BASE+info.icon}" alt="${info.name}" loading="lazy">`:'<span class="icon-missing">?</span>'}</span>
         <h3>${info.name}</h3>
-        <div class="card-actions"><button class="${active?'remove':'wear'}">${active?'篩選中':'看裝備'}</button></div>
+        <div class="card-actions"><button class="${active?'remove':'wear'}">${active?'已穿著':'穿著'}</button></div>
       </article>`;
       });
       while(cards.length<PAGE_SIZE) cards.push('<div class="empty-card" aria-label="空欄位"></div>');
@@ -596,7 +603,7 @@
       const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
       const visibleItems=items.filter(item=>{
         // character 0 = 全角色通用，其餘係該角色專屬
-        if(selectedCharacter!=='all'&&item.character!==0&&String(item.character)!==selectedCharacter)return false;
+        if(item.character!==0&&String(item.character)!==selectedCharacter)return false;
         // 白名單以外：呢個角色根本著唔到
         if(blockedForSelected(item))return false;
         if(!normalizedQuery)return item.category===selectedCategory&&item.subcategory===selectedSubtab;
@@ -657,11 +664,15 @@
     shareLoadoutBtn.addEventListener('click',shareCurrentLoadout);
     // 左上角嘅角色選擇：跑者／故事／聯名三個 tab，每個 13×3 格
     const CHAR_SLOTS=39;
+    // 角色欄淨係著得，脫唔到 —— 再撳同一隻角色當冇撳過，唔會清走佢嘅裝備
     function pickCharacter(id){
-      selectedCharacter=selectedCharacter===id?'all':id;
-      applyCharacterBase();syncLoadoutUrl();
-      gridPage=0;hideTooltip();
-      renderCharacterPicker();renderGrid();renderTopStats();renderStatsSummary();
+      if(!characters[id]||selectedCharacter===id)return;
+      selectedCharacter=id;
+      equipped.avatar={};equipped.role={}; // 轉角色＝重新著過
+      focusCharacterTab();applyCharacterBase();syncLoadoutUrl();
+      gridPage=0;hideTooltip();hideRailTooltip();
+      notify(`已換上「${characters[id].name}」，裝備已重置`);
+      renderCharacterPicker();renderAll();
     }
     function renderCharacterPicker(){
       const groups=characterGroups.length?characterGroups:['跑者','故事','聯名'];
@@ -691,10 +702,11 @@
       document.querySelectorAll('.category-tabs [data-category]').forEach(tab=>tab.classList.toggle('active',tab===button));
       renderSubtabs();renderGrid();
     }));
-    function renderAll(){renderRails();renderSubtabs();renderGrid();renderTargetState();renderStatsSummary();renderTopStats()}
+    function renderNameRibbon(){const info=characters[selectedCharacter];if(info)nameRibbon.textContent=`☆ ${info.name} ☆`}
+    function renderAll(){renderNameRibbon();renderRails();renderSubtabs();renderGrid();renderTargetState();renderStatsSummary();renderTopStats()}
     function fit(){const inset=10;const availableWidth=Math.max(1,innerWidth-inset*2);const availableHeight=Math.max(1,innerHeight-inset*2);const scale=Math.min(availableWidth/1020,availableHeight/708);const viewport=document.getElementById('viewport');viewport.style.width=`${1020*scale}px`;viewport.style.height=`${708*scale}px`;document.getElementById('game').style.transform=`scale(${scale})`}
     addEventListener('resize',()=>{fit();positionSubtabs()});fit();
-    loadCatalog().then(()=>{applySharedLoadout();applyCharacterBase();renderCharacterPicker();renderAll()}).catch(error=>{
+    loadCatalog().then(()=>{applySharedLoadout();ensureCharacter();focusCharacterTab();applyCharacterBase();renderCharacterPicker();renderAll()}).catch(error=>{
       grid.innerHTML=`<div class="empty-card" style="grid-column:1/-1;display:grid;place-items:center;color:#a33;font-size:11px">載入 data/items.json 失敗：${error.message}</div>`;
       console.error('[wardrobe] 載入裝備資料失敗',error);
     });
