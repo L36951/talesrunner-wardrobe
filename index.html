@@ -112,6 +112,7 @@
     let characters={};
     let characterGroups=[];
     let noVisualGroups=[];
+    let wearGroups=[];
     let charTab='跑者';
     const itemById=new Map();
     const ICON_BASE='assets/itemimage/';
@@ -125,6 +126,7 @@
       capRaisers=data.capRaisers||{};
       characterGroups=data.characterGroups||[];
       noVisualGroups=data.noVisualGroups||[];
+      wearGroups=data.wearGroups||[];
       items=data.items.map(entry=>({
         id:entry.id,
         equipmentType:entry.avatarOnlyStats?'avatar':'role',
@@ -141,7 +143,8 @@
         stats:entry.stats||[],
         extra:entry.extra||'',
         blockedFor:entry.blockedFor||null,
-        noVisualFor:entry.noVisualFor??null
+        noVisualFor:entry.noVisualFor??null,
+        wearGroup:entry.wearGroup??null
       }));
       setDefs=Object.fromEntries(Object.entries(data.sets||{}).map(([id,definition])=>[id,{
         name:definition.name,shortName:definition.name,
@@ -170,8 +173,13 @@
     function capFor(name,raiserValue){return baseStatCap+(raiserValue||0)}
     // 角色限制：blockedFor = 白名單以外（著唔到）；noVisualFor = 著到但唔會變外觀
     function blockedForSelected(item){
-      if(selectedCharacter==='all'||!item.blockedFor)return false;
-      return item.blockedFor.includes(Number(selectedCharacter));
+      if(selectedCharacter==='all')return false;
+      // 呢個角色冇呢件裝備嘅模型／貼圖＝根本 render 唔到（性別限制亦係咁嚟）
+      if(item.wearGroup!=null){
+        const g=wearGroups[item.wearGroup];
+        if(g&&!g.includes(Number(selectedCharacter)))return true;
+      }
+      return !!item.blockedFor&&item.blockedFor.includes(Number(selectedCharacter));
     }
     function noVisualForSelected(item){
       if(selectedCharacter==='all'||item.noVisualFor==null)return false;
