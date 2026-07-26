@@ -176,9 +176,10 @@
     // 角色限制：blockedFor = 白名單以外（著唔到）；noVisualFor = 著到但唔會變外觀
     function blockedForSelected(item){
       // 呢個角色冇呢件裝備嘅模型／貼圖＝根本 render 唔到（性別限制亦係咁嚟）
+      // 空 group ＝資產度睇唔出限制（例如寵物），當冇限制，唔好當全世界都著唔到
       if(item.wearGroup!=null){
         const g=wearGroups[item.wearGroup];
-        if(g&&!g.includes(Number(selectedCharacter)))return true;
+        if(g&&g.length&&!g.includes(Number(selectedCharacter)))return true;
       }
       // 性別鎖：說明明確寫「男/女角色專用」，或者同部位有齊(男)(女)兩版
       if(item.sexLock){
