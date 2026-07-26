@@ -144,7 +144,8 @@
         extra:entry.extra||'',
         blockedFor:entry.blockedFor||null,
         noVisualFor:entry.noVisualFor??null,
-        wearGroup:entry.wearGroup??null
+        wearGroup:entry.wearGroup??null,
+        sexLock:entry.sexLock||null
       }));
       setDefs=Object.fromEntries(Object.entries(data.sets||{}).map(([id,definition])=>[id,{
         name:definition.name,shortName:definition.name,
@@ -178,6 +179,11 @@
       if(item.wearGroup!=null){
         const g=wearGroups[item.wearGroup];
         if(g&&!g.includes(Number(selectedCharacter)))return true;
+      }
+      // 性別鎖：說明明確寫「男/女角色專用」，或者同部位有齊(男)(女)兩版
+      if(item.sexLock){
+        const sex=characters[selectedCharacter]?.sex;
+        if(sex&&sex!==item.sexLock)return true;
       }
       return !!item.blockedFor&&item.blockedFor.includes(Number(selectedCharacter));
     }
