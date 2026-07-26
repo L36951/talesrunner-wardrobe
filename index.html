@@ -119,6 +119,7 @@
       const data=await response.json();
       const slotLabel=Object.fromEntries(slotDefs.map(([id,label])=>[id,label]));
       characters=data.characters||{};
+      if(data.statCap)statCap=data.statCap;
       items=data.items.map(entry=>({
         id:entry.id,
         equipmentType:entry.avatarOnlyStats?'avatar':'role',
@@ -153,7 +154,16 @@
       ['pet','寵物','♨'],['back','背部','◇'],['special','特殊','☆'],
       ['booster','助推器','»'],['jewelry','珠寶','◆'],['tail','尾','≈']
     ];
-    const baseStats={'最高速度':6,'加速度':4,'力量':5,'控制':4};
+    // 四項基礎值嚟自所選角色（遊戲資料嘅 attr 17-20）；未揀角色就用 0。
+    // 上限 20 —— wiki 換算表同遊戲資料都係去到 20。
+    const STAT_KEYS=[['最高速度','speed'],['加速度','accel'],['力量','power'],['控制','control']];
+    let statCap=20;
+    let baseStats={'最高速度':0,'加速度':0,'力量':0,'控制':0};
+    function applyCharacterBase(){
+      const info=selectedCharacter!=='all'?characters[selectedCharacter]:null;
+      const s=info&&info.stats||{};
+      baseStats=Object.fromEntries(STAT_KEYS.map(([label,key])=>[label,s[key]||0]));
+    }
     const statsPerPage=15;
     // 只保留「已穿著」嘅 id，冇 entry 就當冇著（14k 件裝備唔預先鋪滿）
     const equipped={avatar:{},role:{}};
@@ -229,12 +239,14 @@
       });
       const sharedView=params.get('view');
       if(sharedView==='avatar'||sharedView==='role')activeLoadout=sharedView;
+      const sharedChar=params.get('char');
+      if(sharedChar&&(sharedChar==='all'||characters[sharedChar]))selectedCharacter=sharedChar;
     }
     function buildShareUrl(){
       const avatarIds=equippedItems('avatar').map(item=>item.id);
       const roleIds=equippedItems('role').map(item=>item.id);
       const url=new URL(location.href);
-      url.hash=`v=1&avatar=${avatarIds.join(',')}&role=${roleIds.join(',')}&view=${activeLoadout}`;
+      url.hash=`v=1&char=${selectedCharacter}&avatar=${avatarIds.join(',')}&role=${roleIds.join(',')}&view=${activeLoadout}`;
       return url.toString();
     }
     function syncLoadoutUrl(){
@@ -304,15 +316,15 @@
       const totals=getTopStatTotals();
       Object.entries(baseStats).forEach(([name,base])=>{
         const modifier=totals.get(name)||0;
-        const appliedModifier=Math.max(0,Math.min(modifier,15-base));
-        const total=Math.min(15,base+appliedModifier);
+        const appliedModifier=Math.max(0,Math.min(modifier,statCap-base));
+        const total=Math.min(statCap,base+appliedModifier);
         const valueNode=document.querySelector(`[data-top-value="${name}"]`);
         const baseBarNode=document.querySelector(`[data-base-bar="${name}"]`);
         const bonusBarNode=document.querySelector(`[data-bonus-bar="${name}"]`);
         valueNode.textContent=formatStatNumber(total);
-        valueNode.title=`基本 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 15）`;
-        baseBarNode.style.width=`${base/15*100}%`;
-        bonusBarNode.style.width=`${appliedModifier/15*100}%`;
+        valueNode.title=`角色 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 ${statCap}）`;
+        baseBarNode.style.width=`${base/statCap*100}%`;
+        bonusBarNode.style.width=`${appliedModifier/statCap*100}%`;
       });
       const luck=totals.get('幸運')||0;
       luckValue.textContent=`${luck.toFixed(2)}%`;
@@ -397,8 +409,8 @@
       const rows=Object.entries(baseStats).map(([name,base])=>{
         const modifier=totals.get(name)?.value||0;
         totals.delete(name);
-        const appliedModifier=Math.max(0,Math.min(modifier,15-base));
-        return {name,value:`${formatStatNumber(Math.min(15,base+appliedModifier))}${modifier?` (+${formatStatNumber(appliedModifier)})`:''}`,tone:modifier?'blue':'green'};
+        const appliedModifier=Math.max(0,Math.min(modifier,statCap-base));
+        return {name,value:`${formatStatNumber(Math.min(statCap,base+appliedModifier))}${modifier?` (+${formatStatNumber(appliedModifier)})`:''}`,tone:modifier?'blue':'green'};
       });
       const preferred=['幸運','bonus EXP','bonus TR','抵抗暈眩','障礙持續時間減少','強化對戰頻道攻擊','最大體力值','每回合最大獲得經驗值','童話藝術頻道 bonus EXP','童話藝術頻道 bonus TR','童話藝術頻道貢獻點數','變身結束時體力恢復','變身成功時持續時間增加','傳染時攻擊速度','傳染持續時間'];
       const ordered=[...totals.entries()].sort(([a],[b])=>{
@@ -493,7 +505,8 @@
       const pick=id=>{
         selectedCharacter=selectedCharacter===id?'all':id;
         characterFilter.value=selectedCharacter;
-        gridPage=0;renderGrid();
+        applyCharacterBase();
+        gridPage=0;renderGrid();renderTopStats();renderStatsSummary();
       };
       grid.querySelectorAll('[data-character]').forEach(card=>{
         card.addEventListener('click',()=>pick(card.dataset.character));
@@ -571,7 +584,8 @@
       characterFilter.value=selectedCharacter;
     }
     characterFilter.addEventListener('change',()=>{
-      selectedCharacter=characterFilter.value;gridPage=0;hideTooltip();renderGrid();
+      selectedCharacter=characterFilter.value;applyCharacterBase();
+      gridPage=0;hideTooltip();renderGrid();renderTopStats();renderStatsSummary();
     });
     equipmentSearch.addEventListener('input',()=>{searchQuery=equipmentSearch.value;gridPage=0;hideTooltip();renderGrid()});
     equipmentSearch.addEventListener('keydown',event=>{if(event.key==='Escape'&&equipmentSearch.value){equipmentSearch.value='';searchQuery='';gridPage=0;renderGrid()}});
@@ -585,7 +599,7 @@
     function renderAll(){renderRails();renderSubtabs();renderGrid();renderTargetState();renderStatsSummary();renderTopStats()}
     function fit(){const inset=10;const availableWidth=Math.max(1,innerWidth-inset*2);const availableHeight=Math.max(1,innerHeight-inset*2);const scale=Math.min(availableWidth/1020,availableHeight/708);const viewport=document.getElementById('viewport');viewport.style.width=`${1020*scale}px`;viewport.style.height=`${708*scale}px`;document.getElementById('game').style.transform=`scale(${scale})`}
     addEventListener('resize',fit);fit();
-    loadCatalog().then(()=>{applySharedLoadout();renderCharacterOptions();renderAll()}).catch(error=>{
+    loadCatalog().then(()=>{applySharedLoadout();renderCharacterOptions();applyCharacterBase();renderAll()}).catch(error=>{
       grid.innerHTML=`<div class="empty-card" style="grid-column:1/-1;display:grid;place-items:center;color:#a33;font-size:11px">載入 data/items.json 失敗：${error.message}</div>`;
       console.error('[wardrobe] 載入裝備資料失敗',error);
     });
