@@ -43,10 +43,21 @@
 
 ## 2. 子 tab
 
-`.wardrobe-links` 由「子 tab 左 ＋ 分頁右」變成單純子 tab、右對齊。
+`.wardrobe-links` 由「子 tab 左 ＋ 分頁右」變成單純子 tab。
 
-`.subtab-list` 加 `margin-left:auto`。橫向捲動（`overflow-x:auto`）保留 ——
-飾品有 10 個子 tab，窄視窗仍然需要。
+**左邊對齊當前大 tab 嘅左邊，向右伸展；唔夠位先向左推到啱啱貼右邊。**
+
+```
+left = clamp(當前 tab 嘅左邊, 容器左邊界, 容器右邊界 - 子tab 總寬)
+```
+
+量度時要留意 `.game` 有 `transform:scale()` —— `getBoundingClientRect()` 係縮放後嘅值，
+但 `marginLeft` 要用佈局像素，所以要除返個 scale。基準用「margin 0 時嘅位置」，
+咁就自動包咗容器嘅 `padding-left:3px`。
+
+`fit()`（視窗 resize）之後要重新定位。
+
+橫向捲動（`overflow-x:auto`）保留 —— 飾品有 10 個子 tab，窄視窗仍然需要。
 
 ## 3. 裝備欄 SVG 面板
 
