@@ -277,6 +277,8 @@
       if(sharedView==='avatar'||sharedView==='role')activeLoadout=sharedView;
       const sharedChar=params.get('char');
       if(sharedChar&&(sharedChar==='all'||characters[sharedChar]))selectedCharacter=sharedChar;
+      // 角色格要跳去嗰隻角色嘅分組，唔係就會停喺跑者 tab、乜都唔著燈
+      if(characters[selectedCharacter]?.group)charTab=characters[selectedCharacter].group;
     }
     function buildShareUrl(){
       const avatarIds=equippedItems('avatar').map(item=>item.id);
