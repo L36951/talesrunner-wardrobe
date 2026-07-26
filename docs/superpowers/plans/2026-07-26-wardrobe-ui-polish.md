@@ -1,6 +1,6 @@
 # 衣櫃 UI 執整 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 把配裝分享器嘅道具視窗版面改到貼近《跑Online》原本 —— 分頁落底、子 tab 靠右、裝備欄改用 SVG 面板、Avatar mode 改成粒掣著燈。
 
@@ -34,7 +34,7 @@
 **Files:**
 - Modify: `index.html` — `renderPager()`（第 508 行起）、`.grid-pager` CSS（第 21 行附近）、`.wardrobe-grid` height（第 13 行）、markup（第 89-90 行）
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 喺 `d:/evoke/talesrunner-wardrobe/test-pager.js` 新建（呢個檔係臨時嘅，Task 1 完成後刪）：
 
@@ -87,13 +87,13 @@
 })();
 ```
 
-- [ ] **Step 2: 跑測試確認佢失敗**
+- [x] **Step 2: 跑測試確認佢失敗**
 
 開 `http://127.0.0.1:8899/index.html?t=1`，喺 DevTools console 貼上面段 script。
 
 Expected: `❌ FAIL`，列出「分頁應該喺 grid 之後」「應該有數字頁碼掣」等等 —— 因為而家分頁喺 `.wardrobe-links` 入面、只有箭嘴冇數字。
 
-- [ ] **Step 3: 改 markup —— 分頁移出 `.wardrobe-links`**
+- [x] **Step 3: 改 markup —— 分頁移出 `.wardrobe-links`**
 
 `index.html` 第 89-90 行，由：
 
@@ -110,7 +110,7 @@ Expected: `❌ FAIL`，列出「分頁應該喺 grid 之後」「應該有數字
             <div class="grid-pager" id="gridPager"></div>
 ```
 
-- [ ] **Step 4: 改 CSS —— 分頁置中、格仔縮短**
+- [x] **Step 4: 改 CSS —— 分頁置中、格仔縮短**
 
 `index.html` 第 21 行附近，將 `.grid-pager` 規則由：
 
@@ -135,7 +135,7 @@ Expected: `❌ FAIL`，列出「分頁應該喺 grid 之後」「應該有數字
 .wardrobe-grid{height:438px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px 12px}
 ```
 
-- [ ] **Step 5: 改 `renderPager()` —— 加數字頁碼**
+- [x] **Step 5: 改 `renderPager()` —— 加數字頁碼**
 
 `index.html` 第 508 行起，整個 `renderPager` 換成：
 
@@ -173,17 +173,17 @@ Expected: `❌ FAIL`，列出「分頁應該喺 grid 之後」「應該有數字
     }
 ```
 
-- [ ] **Step 6: 跑測試確認 pass**
+- [x] **Step 6: 跑測試確認 pass**
 
 硬重載 `http://127.0.0.1:8899/index.html?t=2`（改過 CSS/JS，要繞開 cache），重貼 Step 1 段 script。
 
 Expected: `✅ PASS`
 
-- [ ] **Step 7: 目測**
+- [x] **Step 7: 目測**
 
 睇「服裝 > 上衣」，分頁應該喺格仔下面置中，樣似 `« ‹ 1 … 4 5 [6] 7 8 … 149 › » 共 2,374 件`。撳數字要跳到嗰頁。
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
@@ -204,7 +204,7 @@ rest."
 **Files:**
 - Modify: `index.html` — `.subtab-list` CSS（第 13 行）
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 ```js
 (async () => {
@@ -231,11 +231,11 @@ rest."
 })();
 ```
 
-- [ ] **Step 2: 跑測試確認佢失敗**
+- [x] **Step 2: 跑測試確認佢失敗**
 
 Expected: `❌ FAIL`，「子 tab 應該右對齊」同「子 tab 唔應該左對齊」兩條 —— 因為而家 `.subtab-list` 冇 `margin-left:auto`，分頁走咗之後佢就攤喺左邊。
 
-- [ ] **Step 3: 改 CSS**
+- [x] **Step 3: 改 CSS**
 
 `index.html` 第 13 行，`.subtab-list` 加 `margin-left:auto`：
 
@@ -245,11 +245,11 @@ Expected: `❌ FAIL`，「子 tab 應該右對齊」同「子 tab 唔應該左�
 
 其餘（`::-webkit-scrollbar`、`button`、`button.active`）唔郁。
 
-- [ ] **Step 4: 跑測試確認 pass**
+- [x] **Step 4: 跑測試確認 pass**
 
 硬重載，重貼 Step 1 段 script。Expected: `✅ PASS`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
@@ -270,7 +270,7 @@ row; now that it doesn't, the row was lopsided."
 - Create: `assets/ui/slot-panel-role.svg`（由 `c:/Users/User/Downloads/slotpanel_inactive (1).svg` 複製）
 - Modify: `index.html` — `.rail*` CSS（第 12 行）、`renderRail()`（第 481-497 行附近）
 
-- [ ] **Step 1: 複製 SVG 入 repo**
+- [x] **Step 1: 複製 SVG 入 repo**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
@@ -285,7 +285,7 @@ Expected: 兩個檔，各約 28-30 KB。
 > 原檔名 `active`/`inactive` **唔係狀態**，係兩條唔同嘅欄（Avatar 藍／角色灰），
 > 所以改名。兩條欄各自永遠用自己嗰個檔，唔會因為選中而換圖。
 
-- [ ] **Step 2: 寫失敗測試**
+- [x] **Step 2: 寫失敗測試**
 
 ```js
 (async () => {
@@ -332,11 +332,11 @@ Expected: 兩個檔，各約 28-30 KB。
 })();
 ```
 
-- [ ] **Step 3: 跑測試確認佢失敗**
+- [x] **Step 3: 跑測試確認佢失敗**
 
 Expected: `❌ FAIL` —— 背景唔係 SVG、比例係 72px 寬嘅舊尺寸、格數係 15 唔係 16、空格有 unicode 符號。
 
-- [ ] **Step 4: 改 CSS —— 面板同格位**
+- [x] **Step 4: 改 CSS —— 面板同格位**
 
 `index.html` 第 12 行，將 `.rail` 到 `.role .rail-slot` 呢段換成：
 
@@ -362,7 +362,7 @@ Expected: `❌ FAIL` —— 背景唔係 SVG、比例係 72px 寬嘅舊尺寸、
 .rail-footer{position:absolute;left:0;right:0;top:calc(100% + 4px);width:100%;height:22px;display:flex;align-items:center;justify-content:center;gap:3px;padding:0;border:1px solid #55a8d5;border-radius:5px;color:#4e7188;font-size:8px;background:#fff}
 ```
 
-- [ ] **Step 5: 改 `renderRail()` —— 16 格、絕對定位、空格唔出符號**
+- [x] **Step 5: 改 `renderRail()` —— 16 格、絕對定位、空格唔出符號**
 
 `index.html` 第 481 行起，`renderRail` 換成：
 
@@ -400,11 +400,11 @@ Expected: `❌ FAIL` —— 背景唔係 SVG、比例係 72px 寬嘅舊尺寸、
 > `slotDefs` 有 15 個，第 16 格 `def` 係 `undefined`，所以出一個空 div 佔位 ——
 > 同 SVG 最後一格留空一致。
 
-- [ ] **Step 6: 跑測試確認 pass**
+- [x] **Step 6: 跑測試確認 pass**
 
 硬重載，重貼 Step 2 段 script。Expected: `✅ PASS`
 
-- [ ] **Step 7: 目測對位**
+- [x] **Step 7: 目測對位**
 
 著幾件唔同部位嘅裝備，確認 icon 準確落喺 SVG 畫嘅格入面（唔好偏出框）：
 
@@ -423,7 +423,7 @@ Expected: `❌ FAIL` —— 背景唔係 SVG、比例係 72px 寬嘅舊尺寸、
 })();
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
@@ -447,7 +447,7 @@ blue and grey, and neither swaps on selection — renamed to say so."
 **Files:**
 - Modify: `index.html` — 第 16 行 `.rail:not(.active-target)` 規則
 
-- [ ] **Step 1: 寫失敗測試**
+- [x] **Step 1: 寫失敗測試**
 
 ```js
 (async () => {
@@ -477,11 +477,11 @@ blue and grey, and neither swaps on selection — renamed to say so."
 })();
 ```
 
-- [ ] **Step 2: 跑測試確認佢失敗**
+- [x] **Step 2: 跑測試確認佢失敗**
 
 Expected: `❌ FAIL` —— 未選中嗰條欄而家有 `saturate(.55) brightness(.9)` 同 `opacity:.76`。
 
-- [ ] **Step 3: 改 CSS —— 移除整條欄去色，加強粒掣**
+- [x] **Step 3: 改 CSS —— 移除整條欄去色，加強粒掣**
 
 `index.html` 第 16 行，將：
 
@@ -500,11 +500,11 @@ Expected: `❌ FAIL` —— 未選中嗰條欄而家有 `saturate(.55) brightnes
 
 > 兩條欄嘅面板永遠保持自己顏色 —— 著燈與否只表現喺粒掣度，同遊戲一樣。
 
-- [ ] **Step 4: 跑測試確認 pass**
+- [x] **Step 4: 跑測試確認 pass**
 
 硬重載，重貼 Step 1 段 script。Expected: `✅ PASS`
 
-- [ ] **Step 5: 確認能力值邏輯冇被改壞**
+- [x] **Step 5: 確認能力值邏輯冇被改壞**
 
 ```js
 (async () => {
@@ -539,7 +539,7 @@ Expected: `❌ FAIL` —— 未選中嗰條欄而家有 `saturate(.55) brightnes
 
 Expected: `✅ PASS` —— `activeLoadout` 對能力值嘅影響完全冇變。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
@@ -561,7 +561,7 @@ The mode still drives which stats count; only its presentation changed."
 **Files:**
 - Modify: `docs/superpowers/plans/2026-07-26-wardrobe-ui-polish.md`（勾晒 checkbox）
 
-- [ ] **Step 1: 全頁回歸測試**
+- [x] **Step 1: 全頁回歸測試**
 
 硬重載之後喺 console 跑：
 
@@ -588,11 +588,11 @@ The mode still drives which stats count; only its presentation changed."
 
 Expected: `✅ PASS`
 
-- [ ] **Step 2: 截圖存檔比對**
+- [x] **Step 2: 截圖存檔比對**
 
 用瀏覽器截全頁圖，同 spec 入面嘅遊戲參考圖對照，確認四項都做咗。
 
-- [ ] **Step 3: 勾晒 plan 嘅 checkbox 再 commit**
+- [x] **Step 3: 勾晒 plan 嘅 checkbox 再 commit**
 
 ```bash
 cd d:/evoke/talesrunner-wardrobe
