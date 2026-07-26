@@ -472,7 +472,38 @@
         hideTooltip();renderGrid();
       }));
     }
+    function renderCharacterGrid(){
+      const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
+      const list=Object.entries(characters)
+        .filter(([,info])=>!normalizedQuery||info.name.toLocaleLowerCase().includes(normalizedQuery))
+        .sort(([a],[b])=>Number(a)-Number(b));
+      const pageCount=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+      gridPage=Math.min(Math.max(0,gridPage),pageCount-1);
+      const cards=list.slice(gridPage*PAGE_SIZE,(gridPage+1)*PAGE_SIZE).map(([id,info])=>{
+        const active=selectedCharacter===id;
+        return `<article class="item-card ${active?'selected':''}" data-character="${id}" role="button" tabindex="0" aria-pressed="${active}" aria-label="篩選 ${info.name} 嘅裝備">
+        <span class="item-icon">${info.icon?`<img src="${ICON_BASE+info.icon}" alt="${info.name}" loading="lazy">`:'<span class="icon-missing">?</span>'}</span>
+        <h3>${info.name}</h3>
+        <div class="card-actions"><button class="${active?'remove':'wear'}">${active?'篩選中':'看裝備'}</button></div>
+      </article>`;
+      });
+      while(cards.length<PAGE_SIZE) cards.push('<div class="empty-card" aria-label="空欄位"></div>');
+      grid.innerHTML=cards.join('');
+      renderPager(list.length,pageCount);
+      const pick=id=>{
+        selectedCharacter=selectedCharacter===id?'all':id;
+        characterFilter.value=selectedCharacter;
+        gridPage=0;renderGrid();
+      };
+      grid.querySelectorAll('[data-character]').forEach(card=>{
+        card.addEventListener('click',()=>pick(card.dataset.character));
+        card.addEventListener('keydown',event=>{
+          if(event.key==='Enter'||event.key===' '){event.preventDefault();pick(card.dataset.character)}
+        });
+      });
+    }
     function renderGrid(){
+      if(selectedCategory==='角色'){renderCharacterGrid();return}
       const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
       const visibleItems=items.filter(item=>{
         // character 0 = 全角色通用，其餘係該角色專屬
@@ -536,7 +567,7 @@
     function renderCharacterOptions(){
       const entries=Object.entries(characters).sort(([a],[b])=>Number(a)-Number(b));
       characterFilter.innerHTML='<option value="all">全部角色</option>'
-        +entries.map(([id,name])=>`<option value="${id}">${name}</option>`).join('');
+        +entries.map(([id,info])=>`<option value="${id}">${info.name}</option>`).join('');
       characterFilter.value=selectedCharacter;
     }
     characterFilter.addEventListener('change',()=>{
