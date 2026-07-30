@@ -1,6 +1,6 @@
 import { escapeHtml } from './escape.mjs';
 import { setPath } from './slug.mjs';
-import { SITE_ORIGIN } from './render-set.mjs';
+import { SITE_ORIGIN } from './site.mjs';
 
 export const LISTINGS = [
   { equipmentType: 'role', path: '/sets/role', label: '角色裝備套裝' },

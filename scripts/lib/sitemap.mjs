@@ -1,4 +1,4 @@
-import { SITE_ORIGIN } from './render-set.mjs';
+import { SITE_ORIGIN } from './site.mjs';
 
 // encodeURI 處理中文，再手動轉 & —— XML 入面裸露嘅 & 係語法錯誤。
 function absolute(path) {

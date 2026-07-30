@@ -3,8 +3,11 @@ import { setPath } from './slug.mjs';
 import { summariseStats } from './stats.mjs';
 import { wearableCharacters, pickTryOnCharacter } from './wearable.mjs';
 import { buildTryOnUrl } from './deeplink.mjs';
+import { SITE_ORIGIN } from './site.mjs';
 
-export const SITE_ORIGIN = 'https://talesrunner-wardrobe.kennylaisk.com';
+// tests/render-set.test.mjs imports SITE_ORIGIN from here — re-export so that
+// file doesn't need to change alongside this refactor.
+export { SITE_ORIGIN } from './site.mjs';
 const ICON_BASE = '/assets/itemimage/';
 
 const statLine = ([text, colour]) =>
