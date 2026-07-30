@@ -1,4 +1,4 @@
-const SEPARATORS = /[（）()［］\[\]｛｝{}／/\\、，,\s]+/g;
+const SEPARATORS = /[（）()［］\[\]｛｝{}／/\\、，,：:&\s]+/g;
 
 export function toSlug(name) {
   return String(name)

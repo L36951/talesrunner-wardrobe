@@ -23,3 +23,9 @@ test('collapses runs of separators', () => {
 test('setPath prefixes the stable set id', () => {
   assert.equal(setPath('1259', '青花瓷套裝(男)'), '/set/1259-青花瓷套裝-男');
 });
+
+test('strips characters that are unsafe in a path, URL or XML', () => {
+  assert.equal(toSlug('瑪門: 蒼組合'), '瑪門-蒼組合');
+  assert.equal(toSlug('Love & More 男生組合'), 'Love-More-男生組合');
+  assert.equal(toSlug('全形：冒號'), '全形-冒號');
+});
