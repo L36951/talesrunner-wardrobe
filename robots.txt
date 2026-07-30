@@ -1,0 +1,10 @@
+# 唔擋任何 crawler，包括 AI。
+#
+# 擋 AI crawler 喺呢個 repo 冇實際保護作用：data/items.json 同 assets/ 全部
+# 擺喺公開嘅 GitHub repo，一句 git clone 就有齊，而 GitHub 本身就係訓練資料
+# 嘅主要來源。閂前門而後門大開，唔值得為此放棄被 AI 助手引用嘅機會 ——
+# 呢個網嘅目標由頭到尾都係畀人搵到。
+User-agent: *
+Allow: /
+
+Sitemap: https://talesrunner-wardrobe.kennylaisk.com/sitemap-index.xml
