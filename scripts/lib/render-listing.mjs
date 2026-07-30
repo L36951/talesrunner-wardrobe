@@ -21,10 +21,14 @@ function shell({ title, description, path, body }) {
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${escapeHtml(url)}">
 <meta property="og:image" content="${SITE_ORIGIN}/assets/og-image.jpg">
+<link rel="stylesheet" href="/assets/set-page.css">
 </head>
 <body>
-<nav><a href="/">跑Online 配裝分享器</a></nav>
-<main>${body}</main>
+<div class="topbar"><div class="topbar-in">
+<span class="brand"><a href="/">跑Online 配裝分享器</a></span>
+<nav><a href="/sets">套裝一覽</a><a href="/sets/role">角色裝備</a><a href="/sets/avatar">Avatar</a></nav>
+</div></div>
+<div class="page">${body}</div>
 </body>
 </html>
 `;

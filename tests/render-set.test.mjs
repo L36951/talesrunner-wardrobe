@@ -45,7 +45,8 @@ test('gives every member image an alt of the item name', () => {
 });
 
 test('lists the set bonus', () => {
-  assert.match(render(), /最高速度 \+1/);
+  const html = render();
+  assert.match(html, /<table class="data">[\s\S]*最高速度[\s\S]*\+1[\s\S]*<\/table>/);
 });
 
 test('falls back to explanatory copy when the set has no bonus', () => {
@@ -55,7 +56,55 @@ test('falls back to explanatory copy when the set has no bonus', () => {
 
 test('shows the summed member stats', () => {
   const html = render();
-  assert.match(html, /加速度[^<]*\+2/);
+  assert.match(html, /著齊全套合計[\s\S]*加速度[\s\S]*\+2/);
+});
+
+test('opens with a lead sentence naming the members', () => {
+  const html = render();
+  assert.match(html, /青花瓷套裝\(男\) 係《跑Online》嘅角色裝備套裝/);
+  assert.match(html, /青花瓷羽毛\(男\)、青花瓷長筒靴\(男\)/);
+});
+
+test('links the shared stylesheet', () => {
+  assert.match(render(), /<link rel="stylesheet" href="\/assets\/set-page\.css">/);
+});
+
+test('carries an infobox', () => {
+  const html = render();
+  assert.match(html, /<aside class="infobox">/);
+  assert.match(html, /3 件|2 件/);
+});
+
+test('marks the two data tables so the stylesheet can size their columns', () => {
+  const html = render();
+  assert.match(html, /<table class="data members">/);
+  assert.match(html, /<table class="data totals">/);
+});
+
+test('stacks a member’s stats instead of running them together', () => {
+  const html = render({
+    page: {
+      ...page,
+      members: [{
+        ...page.members[0],
+        stats: [['力量 +3', 'blue'], ['控制 +5', 'blue'], ['EXP +70%', 'blue']],
+      }],
+    },
+  });
+  assert.match(html, /力量 \+3<\/span><br>/);
+  assert.doesNotMatch(html, /力量 \+3<\/span>、/);
+});
+
+test('puts the counterpart in a hatnote at the top, not a section at the bottom', () => {
+  const html = render({ counterpart: { setId: '1260', name: '青花瓷套裝(女)' } });
+  assert.match(html, /class="hatnote"/);
+  const hatnoteAt = html.indexOf('hatnote');
+  const membersAt = html.indexOf('成員裝備');
+  assert.ok(hatnoteAt > 0 && hatnoteAt < membersAt, 'hatnote should precede the member list');
+});
+
+test('omits the hatnote when there is no counterpart', () => {
+  assert.doesNotMatch(render(), /class="hatnote"/);
 });
 
 test('escapes names that contain HTML characters', () => {

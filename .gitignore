@@ -6,6 +6,7 @@ Thumbs.db
 *.log
 .superpowers/
 .playwright-mcp/
+.claude/worktrees/
 
 node_modules/
 /set/
