@@ -34,3 +34,13 @@ test('escapes set names in listings', () => {
     [{ setId: '1', name: '<b>x</b>', equipmentType: 'role', members: [{}, {}] }]);
   assert.doesNotMatch(html, /<b>x<\/b>/);
 });
+
+test('links the shared stylesheet', () => {
+  assert.match(renderHub(pages), /<link rel="stylesheet" href="\/assets\/set-page\.css">/);
+  assert.match(renderListing(LISTINGS[0], pages),
+    /<link rel="stylesheet" href="\/assets\/set-page\.css">/);
+});
+
+test('lays the set list out in columns', () => {
+  assert.match(renderListing(LISTINGS[0], pages), /class="set-list"/);
+});
