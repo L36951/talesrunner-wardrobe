@@ -79,7 +79,7 @@ export function renderSetPage({ page, data, related, counterpart }) {
 <script type="application/ld+json">${jsonLd}</script>
 </head>
 <body>
-<nav><a href="/">跑Online 配裝分享器</a> › <a href="/sets/">套裝</a></nav>
+<nav><a href="/">跑Online 配裝分享器</a> › <a href="/sets">套裝</a></nav>
 <main>
 <h1>${escapeHtml(page.name)}</h1>
 <p class="lead">${escapeHtml(summary)}</p>
