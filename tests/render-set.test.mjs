@@ -75,6 +75,12 @@ test('carries an infobox', () => {
   assert.match(html, /3 件|2 件/);
 });
 
+test('marks the two data tables so the stylesheet can size their columns', () => {
+  const html = render();
+  assert.match(html, /<table class="data members">/);
+  assert.match(html, /<table class="data totals">/);
+});
+
 test('stacks a member’s stats instead of running them together', () => {
   const html = render({
     page: {

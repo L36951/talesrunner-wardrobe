@@ -118,14 +118,14 @@ ${page.setStats.length
     : '<p class="empty">呢套裝備冇套裝效果，能力值淨係計每件裝備自己嘅數值。</p>'}
 
 <h2>成員裝備（${page.members.length} 件）</h2>
-<div class="tablewrap"><table class="data">
+<div class="tablewrap"><table class="data members">
 <thead><tr><th colspan="2">裝備</th><th>部位</th><th>能力值</th></tr></thead>
 <tbody>${page.members.map(memberRow).join('')}</tbody>
 </table></div>
 
 <h2>著齊全套合計</h2>
 ${totals.length
-    ? `<div class="tablewrap"><table class="data"><thead><tr><th>能力值</th><th>合計</th></tr></thead>`
+    ? `<div class="tablewrap"><table class="data totals"><thead><tr><th>能力值</th><th>合計</th></tr></thead>`
       + `<tbody>${totals.map(totalRow).join('')}</tbody></table></div>`
     : '<p class="empty">冇可加總嘅能力值。</p>'}
 ${others.length
