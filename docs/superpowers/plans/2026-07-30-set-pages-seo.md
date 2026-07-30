@@ -126,12 +126,17 @@ test('coerces non-strings', () => {
   "type": "module",
   "scripts": {
     "build": "node scripts/build-seo.mjs",
-    "test": "node --test tests/"
+    "test": "node --test tests/*.test.mjs"
   }
 }
 ```
 
 `"type": "module"` 令 `.mjs` 同 `.js` 都當 ES module。`private: true` 防止誤 publish。
+
+**唔可以寫 `node --test tests/`** —— 喺呢部機（Node 22.22.2 / Windows）傳一個目錄畀
+`--test` 唔會做目錄探索，會當 CJS `require()` 個目錄，報
+`Cannot find module 'D:\evoke\talesrunner-wardrobe\tests'`，然後靜靜哋出
+`1 test / 0 pass / 1 fail` —— 睇落似有行過測試，其實一個都冇行。用 glob。
 
 - [ ] **Step 3: 行測試，確認佢失敗**
 
@@ -476,6 +481,10 @@ export function parseStatLine(text) {
   if (!Number.isFinite(value)) return null;
   const name = rawName.trim();
   if (!name) return null;
+  // 一行有兩個 stat 嘅時候（"攻擊力 +140  防禦力 +120"），貪婪 regex 只會食到最後
+  // 嗰個數字，前面成段變咗 stat 名。與其加總出一行垃圾，不如當佢 parse 唔到 ——
+  // 噉佢會原文顯示喺「其他效果」，準確而且睇得明。
+  if (/[+-]\s*[0-9]/.test(name)) return null;
   return { name, value: sign === '-' ? -value : value, unit };
 }
 
@@ -908,7 +917,7 @@ git commit -m "Order related sets deterministically"
 - Create: `scripts/lib/deeplink.mjs`
 - Test: `tests/deeplink.test.mjs`
 
-格式同 `index.html:291-297` `buildShareUrl()` 一樣，唔加新機制。`equipmentType` 決定件數放
+格式同 `index.html:311-317` `buildShareUrl()` 一樣，唔加新機制。`equipmentType` 決定件數放
 `avatar=` 定 `role=`，另一邊留空。
 
 - [ ] **Step 1: 寫失敗測試**
@@ -951,7 +960,7 @@ Expected: FAIL，`Cannot find module '.../scripts/lib/deeplink.mjs'`
 建立 `scripts/lib/deeplink.mjs`：
 
 ```js
-// 對應 index.html:291-297 buildShareUrl() 嘅 hash 格式。
+// 對應 index.html:311-317 buildShareUrl() 嘅 hash 格式。
 export function buildTryOnUrl(page, characterId) {
   const ids = page.members.map((item) => item.id).join(',');
   const layer = page.equipmentType === 'avatar' ? 'avatar' : 'role';
@@ -1503,8 +1512,19 @@ git commit -m "Emit sitemaps that survive Chinese paths"
 
 `assertEveryPageReachable` 係 spec 要求嘅檢查：每個套裝頁最少要有一條入邊連結。
 列表頁必然連晒全部，所以正常情況一定通過 —— 佢係一個回歸防護，防止日後有人改咗
-列表邏輯而唔為意有頁面變成孤島。同時報告有幾多頁**冇任何相關套裝入邊連結**，
-呢個數字係內容質素信號（304 個冇套裝效果嘅套裝最易中招），報告出嚟但唔 fail build。
+列表邏輯而唔為意有頁面變成孤島。同時報告有幾多頁**淨係得列表頁一條入邊連結**，
+報告出嚟但唔 fail build。
+
+實測數字（同一份 `items.json`）：
+
+| 量度 | 數量 | 其中冇套裝效果 |
+|---|---|---|
+| 從未出現喺任何人嘅「相關套裝」 | 472 | 264 |
+| 上述之中，**而且**冇男女對應版本連結 | **438** | 254 |
+| 被自己嘅男女對應版本救返 | 34 | 10 |
+
+Build 報嘅係 **438** —— 即係真正淨係靠列表頁嗰批。兩個數都啱，只係量度唔同嘢，
+唔好見到 472 就以為 build 報錯。
 
 - [ ] **Step 1: 寫失敗測試**
 
