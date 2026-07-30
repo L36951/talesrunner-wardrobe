@@ -27,7 +27,7 @@ function memberRow(item) {
     : '<td class="icon"></td>';
   const stats = (item.stats ?? []).length
     ? (item.stats).map(([text, colour]) =>
-      `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`).join('、')
+      `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`).join('<br>')
     : '<span class="empty">—</span>';
   return `<tr>${icon}`
     + `<td><b>${escapeHtml(item.name)}</b>`
@@ -114,7 +114,7 @@ ${tryOn.complete ? '' : '<p class="hatnote">冇角色可以著齊呢套裝備。
 
 <h2>套裝效果</h2>
 ${page.setStats.length
-    ? `<table class="data"><tbody>${page.setStats.map(statRow).join('')}</tbody></table>`
+    ? `<div class="tablewrap"><table class="data"><tbody>${page.setStats.map(statRow).join('')}</tbody></table></div>`
     : '<p class="empty">呢套裝備冇套裝效果，能力值淨係計每件裝備自己嘅數值。</p>'}
 
 <h2>成員裝備（${page.members.length} 件）</h2>

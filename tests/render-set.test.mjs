@@ -75,6 +75,20 @@ test('carries an infobox', () => {
   assert.match(html, /3 件|2 件/);
 });
 
+test('stacks a member’s stats instead of running them together', () => {
+  const html = render({
+    page: {
+      ...page,
+      members: [{
+        ...page.members[0],
+        stats: [['力量 +3', 'blue'], ['控制 +5', 'blue'], ['EXP +70%', 'blue']],
+      }],
+    },
+  });
+  assert.match(html, /力量 \+3<\/span><br>/);
+  assert.doesNotMatch(html, /力量 \+3<\/span>、/);
+});
+
 test('puts the counterpart in a hatnote at the top, not a section at the bottom', () => {
   const html = render({ counterpart: { setId: '1260', name: '青花瓷套裝(女)' } });
   assert.match(html, /class="hatnote"/);
