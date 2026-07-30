@@ -6,3 +6,9 @@ Thumbs.db
 *.log
 .superpowers/
 .playwright-mcp/
+
+node_modules/
+/set/
+/sets/
+sitemap-sets.xml
+sitemap-index.xml
