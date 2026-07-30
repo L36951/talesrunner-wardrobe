@@ -25,6 +25,7 @@ function memberCard(item) {
   const stats = (item.stats ?? []).map(statLine).join('');
   return `<li class="member">${icon}<h3>${escapeHtml(item.name)}</h3>`
     + `<p class="slot">${escapeHtml(item.subcategory ?? '')}</p>`
+    + (item.description ? `<p class="desc">${escapeHtml(item.description)}</p>` : '')
     + (stats ? `<ul class="stats">${stats}</ul>` : '')
     + `</li>`;
 }

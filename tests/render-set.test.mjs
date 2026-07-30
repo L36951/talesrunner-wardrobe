@@ -105,6 +105,25 @@ test('emits JSON-LD naming the set', () => {
   assert.equal(parsed.numberOfItems, 2);
 });
 
+test('renders member descriptions, which are most of the page text on sparse sets', () => {
+  const html = renderSetPage({
+    page: {
+      ...page,
+      members: [{ ...page.members[0], description: '繡有永不熄滅的地獄的極限藍焰' }],
+    },
+    data, related: [], counterpart: null,
+  });
+  assert.match(html, /繡有永不熄滅的地獄的極限藍焰/);
+});
+
+test('escapes a member description', () => {
+  const html = renderSetPage({
+    page: { ...page, members: [{ ...page.members[0], description: '<b>x</b>' }] },
+    data, related: [], counterpart: null,
+  });
+  assert.doesNotMatch(html, /<b>x<\/b>/);
+});
+
 test('a name containing a script tag cannot break out of the JSON-LD block', () => {
   const html = renderSetPage({
     page: { ...page, name: '</script><img onerror=alert(1)>' },
