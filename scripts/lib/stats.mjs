@@ -9,6 +9,10 @@ export function parseStatLine(text) {
   if (!Number.isFinite(value)) return null;
   const name = rawName.trim();
   if (!name) return null;
+  // 一行有兩個 stat 嘅時候（"攻擊力 +140  防禦力 +120"），貪婪 regex 只會食到最後
+  // 嗰個數字，前面成段變咗 stat 名。與其加總出一行垃圾，不如當佢 parse 唔到 ——
+  // 噉佢會原文顯示喺「其他效果」，準確而且睇得明。
+  if (/[+-]\s*[0-9]/.test(name)) return null;
   return { name, value: sign === '-' ? -value : value, unit };
 }
 

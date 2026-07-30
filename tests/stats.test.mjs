@@ -63,3 +63,16 @@ test('handles members with no stats at all', () => {
   const result = summariseStats([{ name: 'X' }, { stats: [] }]);
   assert.deepEqual(result, { totals: [], others: [] });
 });
+
+test('rejects a line carrying two stats rather than mis-attributing the last one', () => {
+  assert.equal(parseStatLine('攻擊力 +140  防禦力 +120  生命力 +120'), null);
+  assert.equal(parseStatLine('EXP +100%、最高速度 +1'), null);
+  assert.equal(parseStatLine('TR +20% +1'), null);
+});
+
+test('keeps parsing a single stat whose name contains CJK punctuation', () => {
+  assert.deepEqual(parseStatLine('被巫毒娃娃攻擊時，持續時間 -10%'),
+    { name: '被巫毒娃娃攻擊時，持續時間', value: -10, unit: '%' });
+  assert.deepEqual(parseStatLine('且淘汰全部玩家， TR、 經驗值 +60%'),
+    { name: '且淘汰全部玩家， TR、 經驗值', value: 60, unit: '%' });
+});
