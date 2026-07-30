@@ -45,6 +45,17 @@ test('breaks a full tie on numeric set id for reproducible builds', () => {
   assert.deepEqual(result.map((p) => p.setId), ['4', '30']);
 });
 
+test('still orders deterministically if a set id is not numeric', () => {
+  const target = page('1', 'role', [], 3);
+  const result = relatedSets(target, [
+    target,
+    page('zzz', 'role', [], 3),
+    page('aaa', 'role', [], 3),
+    page('7', 'role', [], 3),
+  ]);
+  assert.deepEqual(result.map((p) => p.setId), ['7', 'aaa', 'zzz']);
+});
+
 test('caps the list at RELATED_LIMIT', () => {
   const target = page('1', 'role', [], 3);
   const others = Array.from({ length: 20 }, (_, i) => page(`${i + 2}`, 'role', [], 3));

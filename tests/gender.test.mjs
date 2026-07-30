@@ -38,6 +38,14 @@ test('ignores a stem that somehow has three or more sides', () => {
   assert.equal(index.size, 0);
 });
 
+test('does not pair two sets of the same gender that share a stem', () => {
+  const index = buildCounterpartIndex([
+    { setId: '1', name: 'A(男)' },
+    { setId: '2', name: 'A(男)' },
+  ]);
+  assert.equal(index.size, 0);
+});
+
 test('the real catalogue yields 76 pairs, i.e. 152 linked pages', () => {
   const data = JSON.parse(readFileSync('data/items.json', 'utf8'));
   const index = buildCounterpartIndex(buildCatalog(data));
