@@ -68,9 +68,20 @@
 套裝未生效嗰陣，成個 `.tooltip-set` 會去色 —— 即係「已著咗其中一件」呢個綠色訊息
 **喺最需要見到嗰陣反而消失**（套裝未齊先至要睇仲爭邊件）。
 
-所以成員清單必須豁免嗰個 filter。做法：成員清單唔擺入 `.tooltip-set` 入面，
-另開一個平級嘅 `.tooltip-members` 容器；或者對 `.tooltip-members` 落
-`filter:none`。實作揀邊個都得，但**測試要守住「未生效嘅套裝，已著成員仍然係綠色」**。
+所以成員清單必須豁免嗰個 filter。
+
+⚠️ **子元素撤銷唔到祖先嘅 `filter`** —— `filter` 落喺祖先度會 rasterize 成個
+subtree，後代寫 `filter:none` 冇用。所以唯一做法係**收窄 `.inactive` 規則本身**，
+唔好落喺容器度：
+
+```css
+/* 由：.tooltip-set.inactive{filter:grayscale(1);opacity:.58}     */
+/* 改成：                                                          */
+.tooltip-set.inactive>b,.tooltip-set.inactive>span{filter:grayscale(1);opacity:.58}
+```
+
+噉套裝標題同能力值照樣去色，但 `.tooltip-members`（一個 `<div>` 子元素）唔受影響。
+**測試要守住「`.tooltip-set.inactive` 唔可以有 `filter`／`opacity`」**。
 
 ## 二：「著晒成套」按鈕
 
