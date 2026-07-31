@@ -160,6 +160,7 @@
       const slotLabel=Object.fromEntries(slotDefs.map(([id,label])=>[id,label]));
       characters=data.characters||{};
       if(data.baseStatCap)baseStatCap=data.baseStatCap;
+      if(data.statHardCap)statHardCap=data.statHardCap;
       capRaisers=data.capRaisers||{};
       characterGroups=data.characterGroups||[];
       noVisualGroups=data.noVisualGroups||[];
@@ -208,8 +209,11 @@
     // 力量嗰個 attr 273 冇任何裝備使用，所以力量實質永遠封頂 15。
     const STAT_KEYS=[['最高速度','speed'],['加速度','accel'],['力量','power'],['控制','control']];
     let baseStatCap=15;
+    let statHardCap=20;
     let capRaisers={};
-    function capFor(name,raiserValue){return baseStatCap+(raiserValue||0)}
+    // 「最大值 +N」推得高過 15，但客戶端寫死咗絕對上限：
+    // 「最高速度能力的最大值增加。(包含增加的數值，最高速度不超過20。)」
+    function capFor(name,raiserValue){return Math.min(statHardCap,baseStatCap+(raiserValue||0))}
     // 角色限制：blockedFor = 白名單以外（著唔到）；noVisualFor = 著到但唔會變外觀
     function blockedForSelected(item){
       // 呢個角色冇呢件裝備嘅模型／貼圖＝根本 render 唔到（性別限制亦係咁嚟）
@@ -399,14 +403,15 @@
       const totals=getTopStatTotals();
       Object.entries(baseStats).forEach(([name,base])=>{
         const modifier=totals.get(name)||0;
-        const cap=capFor(name,capRaisers[name]?totals.get(capRaisers[name]):0);
+        const raiser=(capRaisers[name]?totals.get(capRaisers[name]):0)||0;
+        const cap=capFor(name,raiser);
         const appliedModifier=Math.max(0,Math.min(modifier,cap-base));
         const total=Math.min(cap,base+appliedModifier);
         const valueNode=document.querySelector(`[data-top-value="${name}"]`);
         const baseBarNode=document.querySelector(`[data-base-bar="${name}"]`);
         const bonusBarNode=document.querySelector(`[data-bonus-bar="${name}"]`);
         valueNode.textContent=formatStatNumber(total);
-        valueNode.title=`角色 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 ${cap}${cap>baseStatCap?`＝${baseStatCap}＋最大值提升 ${cap-baseStatCap}`:''}）`;
+        valueNode.title=`角色 ${base} ＋ 裝備 ${formatStatNumber(appliedModifier)}（上限 ${cap}${raiser?`＝${baseStatCap}＋最大值提升 ${formatStatNumber(raiser)}`:''}${baseStatCap+raiser>statHardCap?`，客戶端封頂 ${statHardCap}`:''}）`;
         baseBarNode.style.width=`${base/cap*100}%`;
         bonusBarNode.style.width=`${appliedModifier/cap*100}%`;
       });
