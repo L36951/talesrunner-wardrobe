@@ -7,15 +7,24 @@ function sortKey(setId) {
   return Number.isFinite(numeric) ? numeric : Number.POSITIVE_INFINITY;
 }
 
+// 組合加成一樣係套裝加成 —— 淨計 setStats 嘅話，159 個「全部加成都帶組合條件」
+// 嘅套裝就冇嘢比得對，會跌出晒人哋嘅相關清單。
+function statTexts(page) {
+  return [
+    ...(page.setStats ?? []).map(([text]) => text),
+    ...(page.setCombos ?? []).flatMap((combo) => combo.stats.map(([text]) => text)),
+  ];
+}
+
 export function relatedSets(target, pages, limit = RELATED_LIMIT) {
-  const targetStats = new Set((target.setStats ?? []).map(([text]) => text));
+  const targetStats = new Set(statTexts(target));
 
   return pages
     .filter((page) =>
       page.setId !== target.setId && page.equipmentType === target.equipmentType)
     .map((page) => ({
       page,
-      shared: (page.setStats ?? []).filter(([text]) => targetStats.has(text)).length,
+      shared: statTexts(page).filter((text) => targetStats.has(text)).length,
       sizeGap: Math.abs(page.members.length - target.members.length),
       key: sortKey(page.setId),
     }))

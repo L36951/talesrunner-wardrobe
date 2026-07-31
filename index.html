@@ -46,7 +46,10 @@
     .bottom{position:relative;z-index:10;display:grid;grid-template-columns:390px 155px 1fr;border-top:2px solid #5e9dd2;background:rgba(251,253,255,.97);box-shadow:0 -2px 5px rgba(35,73,130,.2)}.player{display:flex;align-items:center;gap:5px}.rank{display:grid;place-items:center;width:38px;height:100%;color:#aaa;font-size:22px;font-weight:900;font-style:italic;text-shadow:1px 1px #fff;transform:rotate(-12deg)}.portrait{width:27px;height:27px;object-fit:contain;border:1px solid #8aaac4}.player-copy{display:flex;flex:1;flex-direction:column}.player-copy b{font-size:9px;font-weight:500}.exp{height:7px;border:1px solid #777;color:#fff;font-size:6px;line-height:5px;background:linear-gradient(90deg,#2f88ee 49%,#a8b9ca 49%)}.money{display:flex;align-items:center}.money span{flex:1;text-align:center;color:#1680cc;font-size:7px}.money b{display:block;color:#555;font-weight:500}.money button{height:21px;padding:0 6px;border:1px solid #3c8c1a;border-radius:4px;color:#216d1b;font-size:8px;font-weight:900;background:linear-gradient(#9fec4e,#43ad13)}.bottom-icons{display:flex;align-items:center;justify-content:space-around}.bottom-icons button{padding:0;color:#1884e5;font-size:17px;background:transparent}.toast{position:absolute;z-index:50;left:50%;top:48%;transform:translate(-50%,-50%);padding:7px 17px;border:2px solid #8bddff;border-radius:999px;color:#fff;font-size:11px;font-weight:900;background:rgba(17,82,153,.94);box-shadow:0 6px 22px rgba(28,50,112,.45),inset 0 1px #fff;pointer-events:none}.hidden{display:none!important}
     .rail-slot.blocked{border-color:#ff594f;color:#fff;background:linear-gradient(145deg,#ff8074,#d92832);box-shadow:inset 0 0 0 1px rgba(255,255,255,.72),0 0 6px rgba(223,35,43,.62)}.rail-slot.blocked .block-mark{font-size:17px;font-weight:900;line-height:1;text-shadow:0 1px #8e1520}.rail-slot.blocked:after{background:rgba(115,8,17,.76)}
     .item-tooltip{position:absolute;z-index:30;left:5px;top:31px;width:214px;max-height:458px;overflow:hidden;padding:9px 9px 10px;border:1px solid #15171a;border-radius:7px;color:#e7e7e7;background:linear-gradient(155deg,rgba(51,52,56,.97),rgba(22,23,26,.98));box-shadow:0 8px 20px rgba(14,26,49,.5),inset 0 0 0 1px rgba(255,255,255,.1);opacity:0;transform:translateY(5px);transition:opacity .12s,transform .12s;pointer-events:none}.item-tooltip.show{opacity:1;transform:translateY(0)}.tooltip-head{display:flex;align-items:center;gap:8px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.11)}.tooltip-head img{width:44px;height:44px;object-fit:contain;border:1px solid #d69d22;border-radius:5px}.tooltip-head h4{margin:0;color:#fff;font-size:11px}.tooltip-head span{display:block;margin-top:3px;color:#9e9fa4;font-size:8px}.tooltip-description{margin:7px 0;color:#ffe12c;font-size:8px;line-height:1.45}.tooltip-rule{margin:6px 0;color:#36f14a;font-size:8px;line-height:1.4}.tooltip-rule b{display:block;color:#fff233;font-weight:500}.tooltip-section{margin:7px 0 4px;color:#c7c8cc;font-size:8px}.tooltip-stats{display:flex;flex-direction:column;gap:1px;font-size:8px;line-height:1.28}.tooltip-stats .green{color:#38ef4c}.tooltip-stats .blue{color:#37c7ff}.tooltip-stats .red{color:#ff4545}.tooltip-stats .gold{color:#ffe13c}.tooltip-section.muted{color:#8b8d94}.tooltip-stats.muted{opacity:.62}
-.tooltip-extra{margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.1);color:#ff4b4b;font-size:8px}.tooltip-set{margin-top:7px;padding:6px;border:1px solid #6e5b21;border-radius:4px;background:rgba(18,18,18,.62);font-size:8px;line-height:1.35}.tooltip-set b{display:block;margin-bottom:3px;color:#54f258}.tooltip-set span{display:block;color:#ffe33e}.tooltip-set.inactive{filter:grayscale(1);opacity:.58}.tooltip-mode-warning{margin:6px 0;padding:5px 6px;border:1px solid #e69a26;border-radius:4px;color:#ffe36c;font-size:8px;line-height:1.35;background:rgba(103,55,8,.5)}.item-tooltip.role-mode .tooltip-stats,.item-tooltip.role-mode .tooltip-extra{filter:grayscale(1);opacity:.52;text-decoration:line-through}.rail-title{cursor:pointer;transition:box-shadow .15s,filter .15s,opacity .15s}.rail:not(.active-target) .rail-title{filter:saturate(.45) brightness(.96);opacity:.8}.rail.active-target .rail-title{filter:none;opacity:1;box-shadow:0 0 0 2px #fff,0 0 10px rgba(255,214,64,.9)}.rail.active-target .rail-title:after{content:"✓";margin-left:4px}.target-label{font-weight:900;color:#fff3a0}
+.tooltip-extra{margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.1);color:#ff4b4b;font-size:8px}.tooltip-set{margin-top:7px;padding:6px;border:1px solid #6e5b21;border-radius:4px;background:rgba(18,18,18,.62);font-size:8px;line-height:1.35}.tooltip-set b{display:block;margin-bottom:3px;color:#54f258}.tooltip-set span{display:block;color:#ffe33e}.tooltip-set.inactive{filter:grayscale(1);opacity:.58}
+.tooltip-set .combo-head{margin-top:5px;padding-top:4px;border-top:1px solid rgba(255,255,255,.12);color:#c7c8cc}
+.tooltip-set span.combo{color:#8b8d94}.tooltip-set span.combo.met{color:#ffe33e}
+.tooltip-set span.combo.met::before{content:"✓ "}.tooltip-mode-warning{margin:6px 0;padding:5px 6px;border:1px solid #e69a26;border-radius:4px;color:#ffe36c;font-size:8px;line-height:1.35;background:rgba(103,55,8,.5)}.item-tooltip.role-mode .tooltip-stats,.item-tooltip.role-mode .tooltip-extra{filter:grayscale(1);opacity:.52;text-decoration:line-through}.rail-title{cursor:pointer;transition:box-shadow .15s,filter .15s,opacity .15s}.rail:not(.active-target) .rail-title{filter:saturate(.45) brightness(.96);opacity:.8}.rail.active-target .rail-title{filter:none;opacity:1;box-shadow:0 0 0 2px #fff,0 0 10px rgba(255,214,64,.9)}.rail.active-target .rail-title:after{content:"✓";margin-left:4px}.target-label{font-weight:900;color:#fff3a0}
     .rail-slot:focus-visible{outline:2px solid #fff36a;outline-offset:1px}.rail-tooltip{position:absolute;z-index:40;width:226px;max-height:458px;overflow:hidden;padding:9px;border:1px solid #12151a;border-radius:7px;color:#e9edf2;background:linear-gradient(155deg,rgba(53,55,60,.98),rgba(20,22,27,.98));box-shadow:0 8px 20px rgba(14,26,49,.52),inset 0 0 0 1px rgba(255,255,255,.1);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;pointer-events:none}.rail-tooltip.show{opacity:1;transform:translateY(0)}.rail-tooltip-head{display:flex;align-items:center;gap:8px}.rail-tooltip-head img{width:45px;height:45px;flex:0 0 45px;object-fit:contain;border:1px solid #d69d22;border-radius:5px}.rail-tooltip h4{margin:0;color:#fff;font-size:11px}.rail-tooltip .slot-kind{display:block;margin-top:3px;color:#5dd5ff;font-size:8px}.rail-tooltip .slot-empty{margin:6px 0 0;color:#aeb5bf;font-size:9px}.rail-tooltip .slot-state{margin:6px 0 0;color:#65f27a;font-size:8px}.rail-tooltip .slot-state.blocked{color:#ff7676}.rail-tooltip .slot-description{margin:7px 0 0;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);color:#ffe239;font-size:8px;line-height:1.45}.rail-tooltip.role-mode .tooltip-stats,.rail-tooltip.role-mode .tooltip-extra{filter:grayscale(1);opacity:.52;text-decoration:line-through}
     .stats-summary-panel{position:absolute;z-index:35;left:91px;top:120px;width:244px;height:342px;padding:8px 9px 32px;border:1px solid #111820;border-radius:7px;color:#edf2f6;background:linear-gradient(150deg,rgba(54,58,66,.97),rgba(25,29,38,.98));box-shadow:0 10px 24px rgba(12,25,48,.56),inset 0 0 0 1px rgba(255,255,255,.08)}.summary-tabs{height:25px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.summary-tabs button{padding:0;border:1px solid #78b6dc;border-radius:999px;color:#fff;font-size:8px;font-weight:900;background:linear-gradient(#62bee9,#287fba)}.summary-tabs button.active{border-color:#9ad257;background:linear-gradient(#8acb4c,#3d9129)}.summary-tabs button:disabled{opacity:1;cursor:default}.summary-heading{display:flex;align-items:end;justify-content:space-between;margin:7px 1px 5px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.13)}.summary-heading b{color:#6cf07a;font-size:10px}.summary-heading span{color:#9aa7b4;font-size:7px}.summary-list{display:flex;flex-direction:column;gap:1px}.summary-row{height:14px;display:flex;align-items:center;justify-content:space-between;padding:0 3px;border-radius:2px;font-size:8px;background:rgba(255,255,255,.025)}.summary-row:nth-child(2n){background:rgba(255,255,255,.05)}.summary-row .summary-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dfe5eb}.summary-row .summary-value{margin-left:8px;color:#42ed5c;font-weight:900;white-space:nowrap}.summary-row .summary-value.blue{color:#4ac8ff}.summary-row .summary-value.gold{color:#ffe044}.summary-row .summary-value.red{color:#ff6666}.summary-empty{display:grid;place-items:center;height:215px;color:#9da8b3;font-size:9px}.summary-pager{position:absolute;left:0;right:0;bottom:7px;display:flex;align-items:center;justify-content:center;gap:9px;color:#fff;font-size:8px}.summary-pager button{width:18px;height:17px;padding:0;border:1px solid #59778e;border-radius:3px;color:#fff;background:#263542}.summary-pager button:disabled{opacity:.35}.summary-page-note{min-width:25px;text-align:center}
     .stats-panel .stat-top{grid-template-columns:minmax(0,1fr) 82px}.stats-panel .stat-row{grid-template-columns:56px minmax(0,1fr) 20px}.stats-panel .stat-buttons{grid-template-columns:1fr}
@@ -157,7 +160,6 @@
       const response=await fetch('data/items.json',{cache:'no-cache'});
       if(!response.ok)throw new Error('HTTP '+response.status);
       const data=await response.json();
-      const slotLabel=Object.fromEntries(slotDefs.map(([id,label])=>[id,label]));
       characters=data.characters||{};
       if(data.baseStatCap)baseStatCap=data.baseStatCap;
       if(data.statHardCap)statHardCap=data.statHardCap;
@@ -189,7 +191,7 @@
       setDefs=Object.fromEntries(Object.entries(data.sets||{}).map(([id,definition])=>[id,{
         name:definition.name,shortName:definition.name,
         equipmentType:definition.equipmentType,
-        stats:definition.stats||[],special:[]
+        stats:definition.stats||[],comboStats:definition.comboStats||[],special:[]
       }]));
       itemById.clear();setMembers={};
       items.forEach(item=>{
@@ -204,6 +206,7 @@
       ['pet','寵物','♨'],['back','背部','◇'],['special','特殊','☆'],
       ['booster','助推器','»'],['jewelry','珠寶','◆'],['tail','尾','≈']
     ];
+    const slotLabel=Object.fromEntries(slotDefs.map(([id,label])=>[id,label]));
     // 四項基礎值嚟自所選角色（遊戲資料嘅 attr 17-20）；未揀角色就用 0。
     // 上限預設 15，要靠裝備嘅「最大值 +N」（attr 271/272/274）先推得高。
     // 力量嗰個 attr 273 冇任何裝備使用，所以力量實質永遠封頂 15。
@@ -367,6 +370,35 @@
       const setItems=setMembers[setId]||[];
       return Boolean(definition&&setItems.length&&setItems.every(item=>equipped[definition.equipmentType][item.id]));
     }
+    // 套裝入面有啲加成係「夾中呢兩件」就發動，唔使成套齊（客戶端嘅 fdComplexKey）。
+    // 所以佢哋唔會經 isSetActive —— 逐條睇實際著咗邊幾格。
+    function wornSlotsForSet(setId,target){
+      const slots=new Set();
+      equippedItems(target).forEach(item=>{
+        if(item.setId===setId)item.slots.forEach(slot=>slots.add(slot));
+      });
+      return slots;
+    }
+    function comboStatsFor(effectiveTypes){
+      const out=[];
+      ['avatar','role'].forEach(target=>{
+        if(!effectiveTypes.has(target))return;
+        const bySet=new Map();
+        equippedItems(target).forEach(item=>{
+          if(!item.setId)return;
+          if(!bySet.has(item.setId))bySet.set(item.setId,new Set());
+          item.slots.forEach(slot=>bySet.get(item.setId).add(slot));
+        });
+        bySet.forEach((slots,setId)=>{
+          const definition=setDefs[setId];
+          if(!definition||definition.equipmentType!==target)return;
+          definition.comboStats.forEach(combo=>{
+            if(combo.slots.every(slot=>slots.has(slot)))out.push(...combo.stats);
+          });
+        });
+      });
+      return out;
+    }
     function getModeRule(item,target){
       if(item.equipmentType===target){
         return target==='avatar'?'<div class="tooltip-rule">[Avatar 裝備欄穿用時發動能力值]<b>※ Avatar view 會再疊加角色裝備能力值</b><b>※ 男角色專屬道具</b></div>':'<div class="tooltip-rule">[角色裝備欄穿用時發動能力值]<b>※ 此角色裝備能力值正常生效</b><b>※ 男角色專屬道具</b></div>';
@@ -379,7 +411,14 @@
       const definition=setDefs[item.setId];
       if(!definition)return '';
       const active=item.equipmentType===target&&isSetActive(item.setId);
-      return `<div class="tooltip-set ${active?'':'inactive'}"><b>${definition.name} ${active?'・生效中':'・未生效'}</b>${definition.stats.map(([text])=>`<span>${text}</span>`).join('')}${definition.special.map(text=>`<span>${text}</span>`).join('')}</div>`;
+      // 組合加成唔跟 isSetActive —— 夾中指定嗰幾格就發動，逐條標返達成冇
+      // 睇套裝自己喺邊個欄生效，唔係睇件裝備 —— 兩者可以唔同（套裝 avatar、成員 role）
+      const worn=definition.equipmentType===target?wornSlotsForSet(item.setId,target):new Set();
+      const combos=definition.comboStats.map(combo=>{
+        const met=combo.slots.every(slot=>worn.has(slot));
+        return `<span class="combo ${met?'met':''}">${combo.slots.map(slot=>slotLabel[slot]||slot).join('＋')}　${combo.stats.map(([text])=>text).join('、')}</span>`;
+      }).join('');
+      return `<div class="tooltip-set ${active?'':'inactive'}"><b>${definition.name} ${active?'・生效中':'・未生效'}</b>${definition.stats.map(([text])=>`<span>${text}</span>`).join('')}${definition.special.map(text=>`<span>${text}</span>`).join('')}${combos?`<b class="combo-head">夾中就發動・唔使成套</b>${combos}`:''}</div>`;
     }
     function getTopStatTotals(){
       const totals=new Map();
@@ -397,6 +436,7 @@
       const effectiveTypes=activeLoadout==='avatar'?new Set(['avatar','role']):new Set(['role']);
       const candidates=new Set([...activeSetIds('avatar'),...activeSetIds('role')]);
       [...candidates].filter(setId=>effectiveTypes.has(setDefs[setId]?.equipmentType)).forEach(setId=>setDefs[setId].stats.forEach(([text])=>addTextStat(text)));
+      comboStatsFor(effectiveTypes).forEach(([text])=>addTextStat(text));
       return totals;
     }
     function renderTopStats(){
@@ -504,6 +544,8 @@
       const candidates=new Set([...activeSetIds('avatar'),...activeSetIds('role')]);
       const activeSets=[...candidates].filter(setId=>statsSources[setDefs[setId]?.equipmentType]).map(setId=>[setId,setDefs[setId]]);
       activeSets.forEach(([,definition])=>definition.stats.forEach(([text,tone])=>addTextStat(text,tone)));
+      comboStatsFor(new Set(['avatar','role'].filter(target=>statsSources[target])))
+        .forEach(([text,tone])=>addTextStat(text,tone));
       const rows=Object.entries(baseStats).map(([name,base])=>{
         const modifier=totals.get(name)?.value||0;
         totals.delete(name);
