@@ -25,9 +25,13 @@ function memberRow(item) {
     ? `<td class="icon"><img src="${ICON_BASE}${escapeHtml(item.icon)}"`
       + ` alt="${escapeHtml(item.name)}" width="36" height="36" loading="lazy"></td>`
     : '<td class="icon"></td>';
-  const stats = (item.stats ?? []).length
-    ? (item.stats).map(([text, colour]) =>
-      `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`).join('<br>')
+  const line = ([text, colour]) =>
+    `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`;
+  // 活動頻道加成淨係得說明文字，冇結構化來源，所以標明係參考、亦唔入加總
+  const channel = (item.channelStats ?? []).map(
+    ([text, colour]) => `<span class="channel ${escapeHtml(colour)}">${escapeHtml(text)}</span>`);
+  const stats = (item.stats ?? []).length || channel.length
+    ? [...(item.stats ?? []).map(line), ...channel].join('<br>')
     : '<span class="empty">—</span>';
   return `<tr>${icon}`
     + `<td><b>${escapeHtml(item.name)}</b>`

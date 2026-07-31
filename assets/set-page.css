@@ -96,6 +96,10 @@ table.data.totals th:nth-child(2){width:110px}
 /* stat 顏色：淺底可讀版（SPA 嗰四隻係為深色 tooltip 設計） */
 .blue{color:#0f5f9e}.green{color:#186f2a}.red{color:#b81f26}.gold{color:#7d5600}
 
+/* 活動頻道加成：客戶端淨係得說明文字，冇結構化來源，所以標明係參考、唔入加總 */
+.mstats .channel{opacity:.72;font-size:12.5px;font-style:italic}
+.mstats .channel::before{content:"※ ";color:#72777d;font-style:normal}
+
 .hatnote{font-size:14px;color:#54595d;background:#f8f9fa;border-left:4px solid #c8ccd1;
   padding:8px 13px;margin:0 0 16px}
 .empty{color:#72777d;font-style:italic}
