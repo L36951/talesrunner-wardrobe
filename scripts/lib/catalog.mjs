@@ -19,6 +19,7 @@ export function buildCatalog(data) {
       name: definition.name,
       equipmentType: definition.equipmentType ?? 'role',
       setStats: definition.stats ?? [],
+      setCombos: definition.comboStats ?? [],
       members,
     });
   }

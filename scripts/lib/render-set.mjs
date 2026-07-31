@@ -15,6 +15,22 @@ const ICON_BASE = '/assets/itemimage/';
 const statRow = ([text, colour]) =>
   `<tr><td class="${escapeHtml(colour)}">${escapeHtml(text)}</td></tr>`;
 
+// 部位 slot key -> 中文標籤。同 index.html 嘅 slotDefs 對齊。
+const SLOT_LABEL = {
+  hair: '髮型', upper: '上衣', lower: '褲/裙', shoes: '鞋子', head: '頭部',
+  face: '臉部', hands: '手部', back: '背部', neck: '頸部', pet: '寵物',
+  special: '特殊', bracelet: '手環', booster: '助推器', tail: '尾',
+  jewelry: '珠寶',
+};
+
+// 「夾中呢兩件就發動」嘅加成 —— 唔使成套齊（客戶端嘅 fdComplexKey）
+const comboRow = (combo) =>
+  `<tr><td class="combo-when">${combo.slots
+    .map((slot) => escapeHtml(SLOT_LABEL[slot] ?? slot)).join('＋')}</td>`
+  + `<td>${combo.stats
+    .map(([text, colour]) => `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`)
+    .join('<br>')}</td></tr>`;
+
 const totalRow = (entry) =>
   `<tr><td>${escapeHtml(entry.name)}</td>`
   + `<td class="num ${escapeHtml(entry.colour)}">`
@@ -44,7 +60,9 @@ function memberRow(item) {
 function description(page, totals) {
   const bonus = page.setStats.length
     ? page.setStats.map(([text]) => text).join('、')
-    : totals.slice(0, 3).map((entry) => `${entry.name} ${entry.value}${entry.unit}`).join('、');
+    : (page.setCombos ?? []).length
+      ? page.setCombos.flatMap((combo) => combo.stats.map(([text]) => text)).slice(0, 3).join('、')
+      : totals.slice(0, 3).map((entry) => `${entry.name} ${entry.value}${entry.unit}`).join('、');
   return `《跑Online》${page.name}：共 ${page.members.length} 件`
     + (bonus ? `，${bonus}` : '')
     + '。查看每件裝備能力值、可穿著角色，並一鍵試身。';
@@ -119,7 +137,15 @@ ${tryOn.complete ? '' : '<p class="hatnote">冇角色可以著齊呢套裝備。
 <h2>套裝效果</h2>
 ${page.setStats.length
     ? `<div class="tablewrap"><table class="data"><tbody>${page.setStats.map(statRow).join('')}</tbody></table></div>`
-    : '<p class="empty">呢套裝備冇套裝效果，能力值淨係計每件裝備自己嘅數值。</p>'}
+    : (page.setCombos ?? []).length
+      ? '<p class="hint">呢套裝備冇成套加成，淨係有下面嘅組合加成。</p>'
+      : '<p class="empty">呢套裝備冇套裝效果，能力值淨係計每件裝備自己嘅數值。</p>'}
+${(page.setCombos ?? []).length
+    ? `<h3>組合加成</h3>\n<p class="hint">唔使成套齊 —— 夾中下面嘅部位就發動。</p>\n`
+      + `<div class="tablewrap"><table class="data combos">`
+      + `<thead><tr><th>夾中呢啲部位</th><th>加成</th></tr></thead>`
+      + `<tbody>${page.setCombos.map(comboRow).join('')}</tbody></table></div>`
+    : ''}
 
 <h2>成員裝備（${page.members.length} 件）</h2>
 <div class="tablewrap"><table class="data members">

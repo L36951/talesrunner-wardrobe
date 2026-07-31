@@ -11,7 +11,9 @@ export function buildLead(page, wearerCount) {
 
   const bonus = page.setStats.length
     ? '著齊全套會觸發套裝效果，'
-    : '呢套裝備冇套裝效果，';
+    : (page.setCombos ?? []).length
+      ? '唔使著齊全套，夾中指定部位就有組合加成，'
+      : '呢套裝備冇套裝效果，';
 
   const wearers = wearerCount > 0
     ? `共 ${wearerCount} 個角色可以著齊。`

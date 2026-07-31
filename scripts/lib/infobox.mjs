@@ -20,11 +20,15 @@ export function renderInfobox({ page, wearerCount, characterCount, counterpart, 
   const slots = [...new Set(page.members.map((item) => item.subcategory).filter(Boolean))]
     .map(escapeHtml).join('、');
 
+  // 159 個套裝全部加成都帶組合條件，setStats 係空嘅 —— 唔可以就咁寫「冇」
+  const combos = page.setCombos ?? [];
   const bonus = page.setStats.length
     ? page.setStats
       .map(([text, colour]) => `<span class="${escapeHtml(colour)}">${escapeHtml(text)}</span>`)
       .join('<br>')
-    : '<span class="empty">冇</span>';
+    : combos.length
+      ? `<span class="empty">冇成套加成</span><br><span>${combos.length} 條組合加成</span>`
+      : '<span class="empty">冇</span>';
 
   return `<aside class="infobox">
 <div class="ib-title">${escapeHtml(page.name)}</div>
