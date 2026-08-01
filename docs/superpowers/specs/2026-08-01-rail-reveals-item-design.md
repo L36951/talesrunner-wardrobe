@@ -119,9 +119,19 @@ grid 一重畫（換版、搜尋、切角色、著／卸任何一件）張卡就
 
 ## 五：搵唔到嗰陣
 
-`locateItem` 回 `null` 係一條真係行得到嘅路，唔係防禦死碼：`equipped` 唔會因為
-換角色而清走（`pickCharacter`，`index.html:837`），所以左欄可以正正常常顯示住
-一件新角色著唔到嘅裝備，而櫥櫃係會濾走佢嘅（`index.html:731`）—— 根本冇一版有佢。
+`locateItem` 回 `null` 係一條真係行得到嘅路，唔係防禦死碼 —— 入口係**分享 link**。
+
+`applySharedLoadout`（`index.html:311-325`）由 hash 讀配裝嗰陣，淨係 check 個 id
+查唔查得到、同已收嘅 slot 撞唔撞位，**完全冇過 `blockedForSelected`**。所以一條
+帶住「呢隻角色著唔到」嘅裝備 id 嘅 link，打開之後左欄會照顯示，而櫥櫃係濾走佢嘅
+（`index.html:731`）—— 根本冇一版有佢。
+
+2026-08-01 實測：`#v=1&char=13&avatar=140946,…`（阿貝爾 ＋ 聖言小丑組合 8 件）
+一開，rail 8 格全亮，8 件全部 `blockedForSelected` 為真。
+
+⚠️ **唔好以為換角色都會製造呢個狀態** —— `pickCharacter`（`index.html:888`）行
+`equipped.avatar={};equipped.role={}`，轉角色係清晒重新著過嘅。呢份 spec 初稿寫錯咗
+呢一點，實測先發現。
 
 呢時**唔可以靜靜哋乜都唔做**。出一句 `notify`（`index.html:310`）：
 
