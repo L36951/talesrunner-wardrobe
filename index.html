@@ -391,6 +391,21 @@
       if(!rows.length)return '';
       return `<div class="tooltip-members">${rows.map(row=>`<span class="${row.state}">${row.state==='blocked'?'✗ ':''}${row.name}</span>`).join('')}</div>`;
     }
+    // 「著晒成套」要著邊幾件。純函數，理由同上面兩個一樣。
+    // 分母只計 wearable —— 著唔到／撞位嗰啲唔計，否則粒掣永遠停喺「著晒成套」。
+    function planWearSet(members,wornIds,blockedIds){
+      const wearable=[],blocked=[],clashed=[],taken=new Set();
+      members.forEach(item=>{
+        if(blockedIds.includes(item.id)){blocked.push(item.id);return}
+        // 成員之間可以撞部位（一件全身裝就佔 6 格），唔去重就會後著頂走前著
+        if(item.slots.some(slot=>taken.has(slot))){clashed.push(item.id);return}
+        item.slots.forEach(slot=>taken.add(slot));
+        wearable.push(item.id);
+      });
+      const toWear=wearable.filter(id=>!wornIds.includes(id));
+      return {wearable,blocked,clashed,toWear,
+        allWorn:wearable.length>0&&toWear.length===0};
+    }
     function comboStatsFor(effectiveTypes){
       const out=[];
       ['avatar','role'].forEach(target=>{

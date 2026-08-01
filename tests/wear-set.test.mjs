@@ -136,3 +136,41 @@ test('getSetTooltipMarkup 有掛住成員清單', () => {
   assert.match(source[0], /setMemberRows\(/,
     '狀態要行 setMemberRows，唔好喺 template 入面自己再判一次');
 });
+
+test('planWearSet：跳過著唔到嘅成員，分母唔計佢', () => {
+  const planWearSet = loadFn('planWearSet');
+  const plan = planWearSet(MEMBERS, [], ['3']);
+  assert.deepEqual(plan.wearable, ['1', '2']);
+  assert.deepEqual(plan.toWear, ['1', '2']);
+  assert.deepEqual(plan.blocked, ['3']);
+  assert.equal(plan.allWorn, false);
+});
+
+test('planWearSet：著得到嘅全部著晒就算 allWorn，唔理著唔到嗰啲', () => {
+  // 唔計著唔到嗰啲入分母，否則得 2/3 件著得到嘅套裝，粒掣永遠停喺「著晒成套」。
+  const planWearSet = loadFn('planWearSet');
+  const plan = planWearSet(MEMBERS, ['1', '2'], ['3']);
+  assert.deepEqual(plan.toWear, []);
+  assert.equal(plan.allWorn, true);
+});
+
+test('planWearSet：成員之間撞部位，後面嗰件要讓開', () => {
+  // 用合成資料，唔靠真實資料 —— 真實撞位數字會隨 build_items.py 嘅 OCCUPY
+  // 人手表增減。但一件全身裝就佔 6 格（北極熊戲服），表填落去撞位一定會返嚟。
+  const planWearSet = loadFn('planWearSet');
+  const clashing = [
+    { id: 'a', name: '全身戲服', slots: ['upper', 'lower'] },
+    { id: 'b', name: '長褲', slots: ['lower'] },
+    { id: 'c', name: '鞋', slots: ['shoes'] },
+  ];
+  const plan = planWearSet(clashing, [], []);
+  assert.deepEqual(plan.wearable, ['a', 'c']);
+  assert.deepEqual(plan.clashed, ['b']);
+});
+
+test('planWearSet：一件都著唔到就唔算 allWorn', () => {
+  const planWearSet = loadFn('planWearSet');
+  const plan = planWearSet(MEMBERS, [], ['1', '2', '3']);
+  assert.deepEqual(plan.wearable, []);
+  assert.equal(plan.allWorn, false, '空套裝唔可以扮已經著晒');
+});
