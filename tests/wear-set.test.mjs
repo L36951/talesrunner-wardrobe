@@ -174,3 +174,25 @@ test('planWearSet：一件都著唔到就唔算 allWorn', () => {
   assert.deepEqual(plan.wearable, []);
   assert.equal(plan.allWorn, false, '空套裝唔可以扮已經著晒');
 });
+
+test('卡片第二粒掣：冇套裝維持 disabled 快捷，有套裝先做得嘢', () => {
+  const source = html.match(/const cards=pageItems\.map\([\s\S]*?\n {6}\}\);/);
+  assert.ok(source, '搵唔到卡片 markup');
+  assert.match(source[0], /data-action="wear-set"/, '第二粒掣冇接 wear-set action');
+  assert.match(source[0], /快捷/,
+    '冇套裝嘅裝備要維持而家嗰粒 disabled「快捷」，唔好改晒佢個外觀');
+});
+
+test('wearWholeSet 用 activeLoadout，唔會自動切欄', () => {
+  const source = html.match(/const wearWholeSet=[\s\S]*?\n {6}\};/);
+  assert.ok(source, '搵唔到 wearWholeSet');
+  // `[^=]` 係為咗唔好撞正 `activeLoadout==='avatar'` 呢類比較
+  assert.doesNotMatch(source[0], /activeLoadout\s*=[^=]/,
+    '唔可以喺度改 activeLoadout —— 「唔自動切欄」係已拍板嘅決定');
+  assert.match(source[0], /先生效/,
+    '跨欄嗰陣一定要 notify 提返，否則用家會以為壞咗');
+});
+
+test('.card-actions 有 wear-set 嘅樣式', () => {
+  assert.match(html, /\.card-actions \.wear-set\{/);
+});
