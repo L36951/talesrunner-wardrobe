@@ -406,6 +406,21 @@
       return {wearable,blocked,clashed,toWear,
         allWorn:wearable.length>0&&toWear.length===0};
     }
+    // 櫥櫃實際見到邊幾件。renderGrid 同 locateItem 共用同一支 —— 兩份 filter
+    // 一日唔同步，locateItem 計出嚟嗰個頁碼就會靜靜哋錯：跳到一版，件嘢唔喺度。
+    // 同 planWearSet 一樣係純函數，character／isBlocked 由參數入，唔好攞外部變數。
+    function visibleItemsIn(list,options){
+      const normalizedQuery=(options.query||'').trim().toLocaleLowerCase();
+      return list.filter(item=>{
+        // character 0 = 全角色通用，其餘係該角色專屬
+        if(item.character!==0&&String(item.character)!==String(options.character))return false;
+        // 白名單以外：呢個角色根本著唔到
+        if(options.isBlocked(item))return false;
+        if(!normalizedQuery)return item.category===options.category&&item.subcategory===options.subtab;
+        const searchable=[item.name,item.description,item.category,item.subcategory,item.occupancy,item.equipmentType,...item.stats.map(([text])=>text),...item.channelStats.map(([text])=>text),item.extra].join(' ').toLocaleLowerCase();
+        return searchable.includes(normalizedQuery);
+      });
+    }
     function comboStatsFor(effectiveTypes){
       const out=[];
       ['avatar','role'].forEach(target=>{
