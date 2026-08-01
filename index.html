@@ -373,6 +373,21 @@
       });
       return slots;
     }
+    // 遊戲背包 tooltip 最底嗰個成員清單：已著綠、未著灰、呢隻角色著唔到加 ✗。
+    // 呢兩個同下面 planWearSet 都係純函數、冇 closure 依賴 —— tests/wear-set.test.mjs
+    // 會由 source 抽出嚟直接跑，改嘅時候唔好順手攞 setDefs / equipped 呢啲外部變數。
+    function setMemberRows(members,wornIds,blockedIds){
+      return members.map(item=>{
+        const worn=wornIds.includes(item.id);
+        // 著咗就係著咗，就算而家揀嘅角色著唔到 —— 照實情出，唔好扮佢冇著
+        const blocked=!worn&&blockedIds.includes(item.id);
+        return {id:item.id,name:item.name,state:worn?'worn':blocked?'blocked':'idle'};
+      });
+    }
+    function setMembersMarkup(rows){
+      if(!rows.length)return '';
+      return `<div class="tooltip-members">${rows.map(row=>`<span class="${row.state}">${row.state==='blocked'?'✗ ':''}${row.name}</span>`).join('')}</div>`;
+    }
     function comboStatsFor(effectiveTypes){
       const out=[];
       ['avatar','role'].forEach(target=>{

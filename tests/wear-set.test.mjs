@@ -73,3 +73,39 @@ test('每件裝備嘅 slots 都由佢自己嗰格打頭', () => {
     (item) => (item.slots || [item.slot])[0] !== item.slot);
   assert.deepEqual(wrong.map((item) => item.name), []);
 });
+
+const MEMBERS = [
+  { id: '1', name: '魔鬼國王的頭髮', slots: ['hair'] },
+  { id: '2', name: '魔鬼國王的紋樣', slots: ['upper'] },
+  { id: '3', name: '魔鬼國王的鞋', slots: ['shoes'] },
+];
+
+test('setMemberRows 分得出已著／未著／著唔到三態', () => {
+  const setMemberRows = loadFn('setMemberRows');
+  const rows = setMemberRows(MEMBERS, ['1'], ['3']);
+  assert.deepEqual(rows.map((row) => row.state), ['worn', 'idle', 'blocked']);
+  assert.deepEqual(rows.map((row) => row.name),
+    ['魔鬼國王的頭髮', '魔鬼國王的紋樣', '魔鬼國王的鞋']);
+});
+
+test('setMemberRows：已著贏過著唔到', () => {
+  // 著咗之後先揀去另一隻著唔到嘅角色，件嘢仲喺身上。照實情出「已著」。
+  const setMemberRows = loadFn('setMemberRows');
+  const rows = setMemberRows(MEMBERS, ['3'], ['3']);
+  assert.equal(rows[2].state, 'worn');
+});
+
+test('setMembersMarkup 出到三隻色同 ✗ 前綴', () => {
+  const setMemberRows = loadFn('setMemberRows');
+  const setMembersMarkup = loadFn('setMembersMarkup');
+  const markup = setMembersMarkup(setMemberRows(MEMBERS, ['1'], ['3']));
+  assert.match(markup, /class="tooltip-members"/);
+  assert.match(markup, /<span class="worn">魔鬼國王的頭髮<\/span>/);
+  assert.match(markup, /<span class="idle">魔鬼國王的紋樣<\/span>/);
+  assert.match(markup, /<span class="blocked">✗ 魔鬼國王的鞋<\/span>/);
+});
+
+test('setMembersMarkup 冇成員就唔出容器', () => {
+  const setMembersMarkup = loadFn('setMembersMarkup');
+  assert.equal(setMembersMarkup([]), '');
+});
