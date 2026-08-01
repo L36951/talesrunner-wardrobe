@@ -33,8 +33,19 @@ CSS 同 JS 都 inline。唔好加 `import`／`type="module"`／bundler。
 **4. 已知資料事實**（2026-07-31 實測，用嚟寫測試同註解）：
 - 1,980 個套裝，419 個有「同一角色有成員著得到、有成員著唔到」
 - 672 條組合加成全部係 2 件
-- **3 個套裝嘅成員之間會撞部位**（`深幽婚禮套裝(男)` 嘅長褲同禮服都佔 `lower`）
-  → `planWearSet` 一定要處理，唔可以齋 loop 落去著
+
+**5. ⚠️ 撞位嘅數字係浮動嘅，唔可以攞嚟寫測試。**
+本計劃初稿寫過「3 個套裝嘅成員之間會撞部位」（`深幽婚禮套裝(男)` 嘅長褲同禮服
+都佔 `lower`），仲叫人寫個測試去斷言呢種套裝存在。**嗰 3 個撞位其實係
+`OCCUPY_RULES` 靠名估出嚟嘅假象**，PR #11 拆走條規則之後變咗 **0 個**。
+
+所以：
+
+- **唔好**寫「撞位套裝存在」呢類資料測試 —— 佢會隨住 `build_items.py` 嘅
+  `OCCUPY` 人手表增減而 pass/fail，守唔到嘢
+- **但 `planWearSet` 嗰段去重照留**。`OCCUPY` 係人手表，會愈填愈多
+  （北極熊戲服已經佔 6 格），撞位遲早會返嚟。用 Task 4 嘅合成資料做單元測試，
+  唔好靠真實資料
 
 ---
 
@@ -124,21 +135,16 @@ test('組合加成全部係 2 件', () => {
   assert.deepEqual([...sizes], [2]);
 });
 
-test('有套裝嘅成員之間會撞部位', () => {
-  // 2026-07-31 實測 3 個（例：深幽婚禮套裝(男) 嘅長褲同禮服都佔 lower）。
-  // planWearSet 要處理，唔可以齋 loop 落去著 —— 後著嗰件會頂走前面嗰件。
-  const clashing = Object.values(membersBySet).filter((members) => {
-    const taken = new Set();
-    return members.some((item) => {
-      const slots = item.slots || [item.slot];
-      if (slots.some((slot) => taken.has(slot))) return true;
-      slots.forEach((slot) => taken.add(slot));
-      return false;
-    });
-  });
-  assert.ok(clashing.length > 0, '冇撞位嘅話 planWearSet 嗰段去重就係死碼');
+test('每件裝備嘅 slots 都由佢自己嗰格打頭', () => {
+  // planWearSet 同 tooltip 都假設 slots[0] 就係 item.slot。多部位佔用而家係
+  // build_items.py 嘅人手表（PR #11），加新一件嗰陣好易順手擺錯次序。
+  const wrong = data.items.filter(
+    (item) => (item.slots || [item.slot])[0] !== item.slot);
+  assert.deepEqual(wrong.map((item) => item.name), []);
 });
 ```
+
+⚠️ **唔好**加「撞位套裝存在」嗰類資料測試 —— 原因見上面第 5 點。
 
 - [ ] **Step 2: 跑測試**
 
@@ -388,13 +394,14 @@ test('planWearSet：著得到嘅全部著晒就算 allWorn，唔理著唔到嗰�
 });
 
 test('planWearSet：成員之間撞部位，後面嗰件要讓開', () => {
-  // 實測 3 個套裝有呢種情況（深幽婚禮套裝(男)：長褲同禮服都佔 lower）。
-  // 唔去重就會後著頂走前著，個數點極都唔會齊。
+  // 用合成資料，唔靠真實資料 —— 真實撞位數字會隨 build_items.py 嘅 OCCUPY
+  // 人手表增減（PR #11 之後係 0）。但一件全身裝就佔 6 格（北極熊戲服），
+  // 表填落去撞位一定會返嚟，所以呢段去重要留。
   const planWearSet = loadFn('planWearSet');
   const clashing = [
-    { id: 'a', name: '深幽婚禮長褲(男)', slots: ['lower'] },
-    { id: 'b', name: '深幽婚禮禮服(男)', slots: ['lower'] },
-    { id: 'c', name: '深幽婚禮鞋(男)', slots: ['shoes'] },
+    { id: 'a', name: '全身戲服', slots: ['upper', 'lower'] },
+    { id: 'b', name: '長褲', slots: ['lower'] },
+    { id: 'c', name: '鞋', slots: ['shoes'] },
   ];
   const plan = planWearSet(clashing, [], []);
   assert.deepEqual(plan.wearable, ['a', 'c']);
@@ -426,7 +433,7 @@ Expected: 4 條 FAIL，`搵唔到頂層 function planWearSet`。
       const wearable=[],blocked=[],clashed=[],taken=new Set();
       members.forEach(item=>{
         if(blockedIds.includes(item.id)){blocked.push(item.id);return}
-        // 實測 3 個套裝嘅成員之間會撞部位，唔去重就會後著頂走前著
+        // 成員之間可以撞部位（一件全身裝就佔 6 格），唔去重就會後著頂走前著
         if(item.slots.some(slot=>taken.has(slot))){clashed.push(item.id);return}
         item.slots.forEach(slot=>taken.add(slot));
         wearable.push(item.id);
