@@ -881,11 +881,17 @@
     }
     equipmentSearch.addEventListener('input',()=>{searchQuery=equipmentSearch.value;gridPage=0;hideTooltip();renderGrid()});
     equipmentSearch.addEventListener('keydown',event=>{if(event.key==='Escape'&&equipmentSearch.value){equipmentSearch.value='';searchQuery='';gridPage=0;renderGrid()}});
+    // 分類 tab 嘅高亮。tab 自己撳同 revealItem 跳過嚟都要行呢支 ——
+    // 唔抽出嚟嘅話，跳完之後櫥櫃出緊「飾品」但頂上亮住嘅仲係「服裝」。
+    function syncCategoryTabs(){
+      document.querySelectorAll('.category-tabs [data-category]').forEach(tab=>
+        tab.classList.toggle('active',tab.dataset.category===selectedCategory));
+    }
     document.querySelectorAll('.category-tabs [data-category]').forEach(button=>button.addEventListener('click',()=>{
       selectedCategory=button.dataset.category;
       selectedSubtab=defaultSubtab[selectedCategory]||(subtabsByCategory[selectedCategory]||['全部'])[0];
       gridPage=0;
-      document.querySelectorAll('.category-tabs [data-category]').forEach(tab=>tab.classList.toggle('active',tab===button));
+      syncCategoryTabs();
       renderSubtabs();renderGrid();
     }));
     function renderNameRibbon(){const info=characters[selectedCharacter];if(info)nameRibbon.textContent=`☆ ${info.name} ☆`}
