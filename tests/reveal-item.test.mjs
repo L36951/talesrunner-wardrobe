@@ -21,6 +21,14 @@ function loadFns(...names) {
   return new Function(`${sources.join('\n')}\nreturn {${names.join(',')}};`)();
 }
 
+// subtabsByCategory 係 const object 唔係 function，loadFns 抽唔到。抽 source 出嚟
+// 係要緊嘅 —— 喺測試度抄一份副本，就守唔到「index.html 改咗但資料冇跟」嗰種漂移。
+function loadObject(name) {
+  const match = html.match(new RegExp(`\\n {4}const ${name}=(\\{[\\s\\S]*?\\n {4}\\});`));
+  assert.ok(match, `index.html 入面搵唔到 const ${name}`);
+  return new Function(`return ${match[1]};`)();
+}
+
 // 40 件一模一樣嘅上衣，夠跨到第三版（PAGE_SIZE=16）
 const FIXTURE = Array.from({ length: 40 }, (_, i) => ({
   id: String(i + 1), name: `衫${i + 1}`, character: 0,
@@ -107,4 +115,23 @@ test('locateItem：件嘢唔喺清單就回 null，唔會回負數版', () => {
   const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
   const outsider = { ...FIXTURE[0], id: '999' };
   assert.equal(locateItem(FIXTURE, outsider, SPOT), null);
+});
+
+test('有 slots 嘅裝備，分類同子tab 全部喺櫥櫃 tab 表入面', () => {
+  // 冇呢條，locateItem 就會跳去一個唔存在嘅 subtab，個 grid 一片空白。
+  // 2026-08-01 實測：15 個 category/subcategory 組合，零孤兒。
+  const subtabs = loadObject('subtabsByCategory');
+  const orphans = [...new Set(data.items
+    .filter((item) => item.slots && item.slots.length)
+    .filter((item) => !(subtabs[item.category] || []).includes(item.subcategory))
+    .map((item) => `${item.category} / ${item.subcategory}`))];
+  assert.deepEqual(orphans, []);
+});
+
+test('有 slots 嘅裝備冇一件係「角色」分類', () => {
+  // renderGrid 一見 selectedCategory==='角色' 就轉去 renderCharacterGrid（另一個
+  // grid、另一套分頁）。rail 上件件都有 slots，所以呢條路永遠唔應該撞到。
+  const wrong = data.items.filter(
+    (item) => item.slots && item.slots.length && item.category === '角色');
+  assert.deepEqual(wrong.map((item) => item.name), []);
 });
