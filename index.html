@@ -738,16 +738,8 @@
     }
     function renderGrid(){
       if(selectedCategory==='角色'){renderCharacterGrid();return}
-      const normalizedQuery=searchQuery.trim().toLocaleLowerCase();
-      const visibleItems=items.filter(item=>{
-        // character 0 = 全角色通用，其餘係該角色專屬
-        if(item.character!==0&&String(item.character)!==selectedCharacter)return false;
-        // 白名單以外：呢個角色根本著唔到
-        if(blockedForSelected(item))return false;
-        if(!normalizedQuery)return item.category===selectedCategory&&item.subcategory===selectedSubtab;
-        const searchable=[item.name,item.description,item.category,item.subcategory,item.occupancy,item.equipmentType,...item.stats.map(([text])=>text),...item.channelStats.map(([text])=>text),item.extra].join(' ').toLocaleLowerCase();
-        return searchable.includes(normalizedQuery);
-      });
+      const visibleItems=visibleItemsIn(items,{category:selectedCategory,subtab:selectedSubtab,
+        query:searchQuery,character:selectedCharacter,isBlocked:blockedForSelected});
       const activeEquipped=equipped[activeLoadout];
       const pageCount=Math.max(1,Math.ceil(visibleItems.length/PAGE_SIZE));
       gridPage=Math.min(Math.max(0,gridPage),pageCount-1);
