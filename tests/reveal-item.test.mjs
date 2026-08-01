@@ -71,3 +71,40 @@ test('visibleItemsIn：isBlocked 講著唔到嘅唔出', () => {
   });
   assert.deepEqual(out.map((item) => item.id), ['1', '3']);
 });
+
+const SPOT = { character: '1', isBlocked: NEVER, pageSize: 16 };
+
+test('locateItem：第 16 件仲喺第一版，第 17 件過版', () => {
+  const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
+  assert.equal(locateItem(FIXTURE, FIXTURE[15], SPOT).page, 0);
+  assert.equal(locateItem(FIXTURE, FIXTURE[16], SPOT).page, 1);
+});
+
+test('locateItem：回埋要跳去邊個 tab', () => {
+  const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
+  const boots = { ...FIXTURE[0], id: '99', subcategory: '鞋子' };
+  assert.deepEqual(locateItem([boots], boots, SPOT),
+    { category: '服裝', subtab: '鞋子', page: 0 });
+});
+
+test('locateItem：頁數用濾完嘅清單計，唔計第二隻角色專屬嗰啲', () => {
+  const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
+  // 頭 20 件改成第二隻角色專屬：目標由原始清單第 21 位，變成實際清單第 1 位。
+  // 攞原始 index 計就會答第 1 版，跳過去件嘢唔喺度。
+  const list = FIXTURE.map((item, i) => (i < 20 ? { ...item, character: 2 } : item));
+  assert.deepEqual(locateItem(list, list[20], SPOT),
+    { category: '服裝', subtab: '上衣', page: 0 });
+});
+
+test('locateItem：呢隻角色著唔到就回 null', () => {
+  const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
+  const spot = locateItem(FIXTURE, FIXTURE[0],
+    { ...SPOT, isBlocked: (item) => item.id === '1' });
+  assert.equal(spot, null);
+});
+
+test('locateItem：件嘢唔喺清單就回 null，唔會回負數版', () => {
+  const { locateItem } = loadFns('visibleItemsIn', 'locateItem');
+  const outsider = { ...FIXTURE[0], id: '999' };
+  assert.equal(locateItem(FIXTURE, outsider, SPOT), null);
+});

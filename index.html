@@ -421,6 +421,16 @@
         return searchable.includes(normalizedQuery);
       });
     }
+    // 件裝備喺櫥櫃邊一版。用件裝備自己嘅 category／subcategory 做目標 tab，
+    // query 當空（撳左欄一律清搜尋）。搵唔到回 null —— 見 revealItem 點處理。
+    function locateItem(list,item,options){
+      const scoped=visibleItemsIn(list,{category:item.category,subtab:item.subcategory,
+        query:'',character:options.character,isBlocked:options.isBlocked});
+      const index=scoped.findIndex(candidate=>candidate.id===item.id);
+      if(index<0)return null;
+      return {category:item.category,subtab:item.subcategory,
+        page:Math.floor(index/options.pageSize)};
+    }
     function comboStatsFor(effectiveTypes){
       const out=[];
       ['avatar','role'].forEach(target=>{
