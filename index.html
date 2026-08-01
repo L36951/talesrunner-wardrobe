@@ -438,9 +438,11 @@
       const spot=locateItem(items,item,{character:selectedCharacter,
         isBlocked:blockedForSelected,pageSize:PAGE_SIZE});
       if(!spot){
-        // 換角色唔會清走 equipped，所以左欄可以正正常常著住一件新角色著唔到嘅裝備，
-        // 而櫥櫃係濾走佢嘅 —— 根本冇一版有佢。呢個「唔郁」嘅決定要講返出嚟，
-        // 否則同壞咗一模一樣（同 wearWholeSet 嗰句「呢套喺角色欄先生效」同一路數）。
+        // 一條分享 link 可以帶住呢隻角色著唔到嘅裝備 —— applySharedLoadout 淨係
+        // check id 存唔存在同撞唔撞位，唔會過 blockedForSelected。噉左欄就會照顯示，
+        // 而櫥櫃係濾走佢嘅：冇一版有佢。（換角色唔會整出呢個狀態，pickCharacter
+        // 會清晒 equipped。）呢個「唔郁」嘅決定要講返出嚟，否則同壞咗一模一樣
+        // ——同 wearWholeSet 嗰句「呢套喺角色欄先生效」同一路數。
         notify(`「${item.name}」${characters[selectedCharacter]?.name||'呢隻角色'}著唔到，櫥櫃唔會列出`);
         return;
       }
@@ -683,6 +685,13 @@
         slot.addEventListener('mouseleave',hideRailTooltip);
         slot.addEventListener('focus',()=>showRailTooltip(slot,target));
         slot.addEventListener('blur',hideRailTooltip);
+        // 空格冇 data-item-id，唔做嘢。被佔用嗰啲「×」格帶嘅係佔用嗰件嘅 id
+        // （renderRail 出 markup 嗰陣已經係咁），所以會跳去佔用嗰件，同 tooltip 一致。
+        slot.addEventListener('click',()=>{if(slot.dataset.itemId)revealItem(slot.dataset.itemId)});
+        slot.addEventListener('keydown',event=>{
+          if(!slot.dataset.itemId)return;
+          if(event.key==='Enter'||event.key===' '){event.preventDefault();revealItem(slot.dataset.itemId)}
+        });
       });
     }
     function renderRails(){
