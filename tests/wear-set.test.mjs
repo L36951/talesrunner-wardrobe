@@ -109,3 +109,30 @@ test('setMembersMarkup 冇成員就唔出容器', () => {
   const setMembersMarkup = loadFn('setMembersMarkup');
   assert.equal(setMembersMarkup([]), '');
 });
+
+test('.tooltip-set.inactive 唔可以將 filter/opacity 落喺成個容器度', () => {
+  // CSS filter 落喺祖先度會 rasterize 成個 subtree，後代點寫都撤銷唔到。
+  // 落喺容器度 = 套裝未生效時，已著成員嗰隻綠色會被洗走 —— 偏偏就係
+  // 套裝未齊嗰陣先最需要見到「仲爭邊幾件」。
+  const container = html.match(/\.tooltip-set\.inactive\{([^}]*)\}/);
+  assert.equal(container, null,
+    '.tooltip-set.inactive 唔應該再有「淨係佢自己」嗰條規則 —— '
+    + '有嘅話 filter/opacity 會蓋住成個 subtree，包括 .tooltip-members');
+  assert.match(html, /\.tooltip-set\.inactive>[^{]*\{[^}]*filter:grayscale/,
+    '灰化要落喺 .tooltip-set.inactive 嘅直屬 b/span 度，唔好淨係刪走');
+});
+
+test('成員清單三隻狀態都有自己嘅色', () => {
+  for (const state of ['worn', 'idle', 'blocked']) {
+    assert.match(html, new RegExp(`\.tooltip-members \.${state}\{`),
+      `CSS 冇定義 .tooltip-members .${state}`);
+  }
+});
+
+test('getSetTooltipMarkup 有掛住成員清單', () => {
+  const source = html.match(/function getSetTooltipMarkup\([\s\S]*?\n {4}\}/);
+  assert.ok(source, '搵唔到 getSetTooltipMarkup');
+  assert.match(source[0], /setMembersMarkup\(/, 'tooltip 冇出成員清單');
+  assert.match(source[0], /setMemberRows\(/,
+    '狀態要行 setMemberRows，唔好喺 template 入面自己再判一次');
+});
